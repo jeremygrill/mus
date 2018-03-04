@@ -1,0 +1,22 @@
+Int run(){
+	Note a;
+	Note b;
+	Chord c;
+	Seq s;
+
+	play((5, 4 | 3));
+	play((5, 4 | 3) * (6, 4 | 3));
+	a = (5, 4 | 3);
+	b = (6, 4 | 3);
+
+	play(a * b);
+	c = a * b; //constructs a and b in a chord
+	play(c);
+
+	play(a + b);
+	d = a + b; //constructs a and b in a sequence
+	play(); //play needs to take an argument! won’t work.
+
+
+	return a;
+}

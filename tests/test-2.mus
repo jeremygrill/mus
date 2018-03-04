@@ -1,0 +1,13 @@
+Int run(){
+	Int i;
+
+	Note n;	
+	Seq s;
+	s = $();
+
+	while(i < 0){
+		n = (1 , 2 | i);
+		++i; 
+		s = s + n;
+	}
+}
