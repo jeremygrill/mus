@@ -48,9 +48,7 @@ let translate (globals, functions) =
   (* Declare each global variable; remember its value in a map *)
   let global_vars : L.llvalue StringMap.t =
     let global_var m (t, n) = 
-      let init = match t with
-          A.Float -> L.const_float (ltype_of_typ t) 0.0
-        | _ -> L.const_int (ltype_of_typ t) 0
+      let init = L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
@@ -76,7 +74,10 @@ let translate (globals, functions) =
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
+    and note_format_str = L.build_global_stringptr "%n\n" "fmt" builder
+    and chord_format_str = L.build_global_stringptr "%c\n" "fmt" builder 
+    and seq_format_str = L.build_global_stringptr "%s\n" "fmt" builder 
+    and str_format_str = L.build_global_stringptr "%a\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -109,9 +110,12 @@ let translate (globals, functions) =
 
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
-	SLiteral i -> L.const_int i32_t i
+	      SIntLit i -> L.const_int i32_t i
       | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
-      | SFliteral l -> L.const_float_of_string float_t l
+      | SNoteLit n -> L.const_int n_t n
+      | SChordLit c -> L.const_int crd_t c
+      | SSeqLit s -> L.const_int seq_t s
+      | SStrLit a -> L.const_int str_t a
       | SNoexpr -> L.const_int i32_t 0
       | SId s -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = expr builder e in
@@ -120,28 +124,74 @@ let translate (globals, functions) =
 	  let (t, _) = e1
 	  and e1' = expr builder e1
 	  and e2' = expr builder e2 in
-	  if t = A.Float then (match op with 
-	    A.Add     -> L.build_fadd
-	  | A.Sub     -> L.build_fsub
-	  | A.Mult    -> L.build_fmul
-	  | A.Div     -> L.build_fdiv 
-	  | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
-	  | A.Neq     -> L.build_fcmp L.Fcmp.One
-	  | A.Less    -> L.build_fcmp L.Fcmp.Olt
-	  | A.Leq     -> L.build_fcmp L.Fcmp.Ole
-	  | A.Greater -> L.build_fcmp L.Fcmp.Ogt
-	  | A.Geq     -> L.build_fcmp L.Fcmp.Oge
-	  | A.And | A.Or ->
-	      raise (Failure "internal error: semant should have rejected and/or on float")
+	  if t = A.Note then (match op with 
+	    A.Add     -> L.build_add
+	  | A.Sub     -> 
+        raise (Failure "internal error: semant should have rejected sub on note")
+	  | A.Mult    -> L.build_mul
+	  | A.Div     -> 
+        raise (Failure "internal error: semant should have rejected div on note")
+	  | A.Eq      -> L.build_icmp L.Icmp.Oeq
+	  | A.Neq     -> L.build_icmp L.Icmp.One
+	  | A.Less    -> 
+        raise (Failure "internal error: semant should have rejected less than on note")
+	  | A.Leq     -> 
+        raise (Failure "internal error: semant should have rejected leq on note")
+	  | A.Greater -> 
+        raise (Failure "internal error: semant should have rejected greater than on note")
+	  | A.Geq     -> 
+        raise (Failure "internal error: semant should have rejected geq on note")
+	  | A.Land | A.Lor ->
+	      raise (Failure "internal error: semant should have rejected and/or on note")
 	  ) e1' e2' "tmp" builder 
-	  else (match op with
+	  else if t = A.Chord then (match op with 
+      A.Add     -> L.build_add
+    | A.Sub     -> 
+        raise (Failure "internal error: semant should have rejected sub on chord")
+    | A.Mult    -> L.build_mul
+    | A.Div     -> 
+        raise (Failure "internal error: semant should have rejected div on chord")
+    | A.Eq      -> L.build_icmp L.Icmp.Oeq
+    | A.Neq     -> L.build_icmp L.Icmp.One
+    | A.Less    -> 
+        raise (Failure "internal error: semant should have rejected less than on chord")
+    | A.Leq     -> 
+        raise (Failure "internal error: semant should have rejected leq on chord")
+    | A.Greater -> 
+        raise (Failure "internal error: semant should have rejected greater than on chord")
+    | A.Geq     -> 
+        raise (Failure "internal error: semant should have rejected geq on chord")
+    | A.Land | A.Lor ->
+        raise (Failure "internal error: semant should have rejected and/or on chord")
+    ) e1' e2' "tmp" builder 
+    else if t = A.Seq then (match op with 
+      A.Add     -> L.build_add
+    | A.Sub     -> 
+        raise (Failure "internal error: semant should have rejected sub on seq")
+    | A.Mult    -> L.build_mul
+    | A.Div     -> 
+        raise (Failure "internal error: semant should have rejected div on seq")
+    | A.Eq      -> L.build_icmp L.Icmp.Oeq
+    | A.Neq     -> L.build_icmp L.Icmp.One
+    | A.Less    -> 
+        raise (Failure "internal error: semant should have rejected less than on seq")
+    | A.Leq     -> 
+        raise (Failure "internal error: semant should have rejected leq on seq")
+    | A.Greater -> 
+        raise (Failure "internal error: semant should have rejected greater than on seq")
+    | A.Geq     -> 
+        raise (Failure "internal error: semant should have rejected geq on seq")
+    | A.Land | A.Lor ->
+        raise (Failure "internal error: semant should have rejected and/or on seq")
+    ) e1' e2' "tmp" builder 
+    else (match op with
 	  | A.Add     -> L.build_add
 	  | A.Sub     -> L.build_sub
 	  | A.Mult    -> L.build_mul
-          | A.Div     -> L.build_sdiv
-	  | A.And     -> L.build_and
-	  | A.Or      -> L.build_or
-	  | A.Equal   -> L.build_icmp L.Icmp.Eq
+    | A.Div     -> L.build_sdiv
+	  | A.Land    -> L.build_and
+	  | A.Lor     -> L.build_or
+	  | A.Eq      -> L.build_icmp L.Icmp.Eq
 	  | A.Neq     -> L.build_icmp L.Icmp.Ne
 	  | A.Less    -> L.build_icmp L.Icmp.Slt
 	  | A.Leq     -> L.build_icmp L.Icmp.Sle
@@ -152,12 +202,13 @@ let translate (globals, functions) =
 	  let (t, _) = e in
           let e' = expr builder e in
 	  (match op with
-	    A.Neg when t = A.Float -> L.build_fneg 
-	  | A.Neg                  -> L.build_neg
-          | A.Not                  -> L.build_not) e' "tmp" builder
-      | SCall ("print", [e]) | SCall ("printb", [e]) ->
+	    A.Neg                  -> L.build_neg
+    | A.Not                  -> L.build_not
+    | A.Incr                 -> L.build_add 1
+    | A.Decr                 -> L.build_add -1) e' "tmp" builder
+    | SCall ("print", [e]) ->
 	  L.build_call print_func [| int_format_str ; (expr builder e) |]
-	    "printf" builder
+	    "print" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
@@ -257,10 +308,7 @@ let translate (globals, functions) =
     let builder = stmt builder (SBlock fdecl.sbody) in
 
     (* Add a return if the last block falls off the end *)
-    add_terminal builder (match fdecl.styp with
-        A.Void -> L.build_ret_void
-      | A.Float -> L.build_ret (L.const_float float_t 0.0)
-      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
+    add_terminal builder L.build_ret (L.const_int (ltype_of_typ t) 0)
   in
 
   List.iter build_function_body functions;
