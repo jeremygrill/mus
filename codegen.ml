@@ -26,7 +26,11 @@ let translate (globals, functions) =
   (* Add types to the context so we can use them in our LLVM code *)
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context
-  and i1_t       = L.i1_type     context
+  and i1_t       = L.i1_type     context in
+  let n_t        = L.struct_type context [| i32_t ; i32_t ; i32_t |] in  (*check lets/ands if shit gets wacky*)
+  let str_t      = L.pointer_type i8_t in
+  let crd_t      = L.pointer_type n_t  in
+  let seq_t      = L.pointer_type crd_t
   (* Create an LLVM module -- this is a "container" into which we'll 
      generate actual code *)
   and the_module = L.create_module context "mus" in
