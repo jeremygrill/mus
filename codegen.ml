@@ -27,8 +27,8 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context in
+  let str_t      = L.pointer_type i8_t in
   let n_t        = L.struct_type context [| i32_t ; i32_t ; i32_t |] in  (*check lets/ands if shit gets wacky*)
-  let str_t      = L.pointer_type i8_t in
   let crd_t      = L.pointer_type n_t  in
   let seq_t      = L.pointer_type crd_t
   (* Create an LLVM module -- this is a "container" into which we'll 
@@ -37,8 +37,12 @@ let translate (globals, functions) =
 
   (* Convert MicroC types to LLVM types *)
   let ltype_of_typ = function
-      A.Int   -> i32_t
-    | A.Bool  -> i1_t
+      A.Int    -> i32_t
+    | A.Bool   -> i1_t
+    | A.String -> str_t
+    | A.Note   -> n_t
+    | A.Chord  -> crd_t
+    | A.Seq    -> seq_t
   in
 
   (* Declare each global variable; remember its value in a map *)
@@ -50,13 +54,10 @@ let translate (globals, functions) =
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
-  let printf_t : L.lltype = 
+  let print_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
-  let printf_func : L.llvalue = 
-     L.declare_function "printf" printf_t the_module in
-
-  let printbig_t = L.function_type i32_t [| i32_t |] in
-  let printbig_func = L.declare_function "printbig" printbig_t the_module in
+  let print_func : L.llvalue = 
+     L.declare_function "print" print_t the_module in
 
   (* Define each function (arguments and return type) so we can 
    * define it's body and call it later *)
@@ -155,12 +156,7 @@ let translate (globals, functions) =
 	  | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
-	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
-	    "printf" builder
-      | SCall ("printbig", [e]) ->
-	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
-      | SCall ("printf", [e]) -> 
-	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
+	  L.build_call print_func [| int_format_str ; (expr builder e) |]
 	    "printf" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
