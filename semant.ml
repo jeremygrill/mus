@@ -110,8 +110,10 @@ let check (globals, functions) =
       | Unop(op, e) as ex -> 
           let (t, e') = expr e in
           let ty = match op with
-            Neg when t = Int || t = Float -> t
+            Neg when t = Int -> Int
           | Not when t = Bool -> Bool
+          | Incr when t = Int -> Int
+          | Decr when t = Int -> Int
           | _ -> raise (Failure ("illegal unary operator " ^ 
                                  string_of_uop op ^ string_of_typ t ^
                                  " in " ^ string_of_expr ex))
