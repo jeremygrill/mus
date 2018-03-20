@@ -168,7 +168,8 @@ let translate (globals, functions) =
       A.Add     -> L.build_add
     | A.Sub     -> 
         raise (Failure "internal error: semant should have rejected sub on seq")
-    | A.Mult    -> L.build_mul
+    | A.Mult    ->
+        raise (Failure "internal error: semant should have rejected mult on seq")
     | A.Div     -> 
         raise (Failure "internal error: semant should have rejected div on seq")
     | A.Eq      -> L.build_icmp L.Icmp.Oeq

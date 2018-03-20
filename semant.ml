@@ -1,5 +1,5 @@
-(* Semantic checking for the MicroC compiler *)
-
+(* Semantic checking for the mus compiler *)
+(*mem2318*)
 open Ast
 open Sast
 
@@ -42,10 +42,7 @@ let check (globals, functions) =
       typ = Void; fname = name; 
       formals = [(ty, "x")];
       locals = []; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", Int);
-			                         ("printb", Bool);
-			                         ("printf", Float);
-			                         ("printbig", Int) ]
+    in List.fold_left add_bind StringMap.empty [ ("print", Int) ]
   in
 
   (* Add function name to symbol table *)
@@ -97,11 +94,12 @@ let check (globals, functions) =
 
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
-        Literal  l -> (Int, SLiteral l)
-      | Fliteral l -> (Float, SFliteral l)
+        Literal  l -> (Int, SIntLit l)
       | BoolLit l  -> (Bool, SBoolLit l)
-      | NoteLit l  -> ()
-      | Noexpr     -> (Void, SNoexpr)
+      | NoteLit n  -> (NoteLit n, SNoteLit n) 
+      | ChordLit c -> (ChordLit c, SChordLit c)
+      | SeqLit s   -> (SeqLit s, SSeqLit s)
+      | Noexpr     -> (Noexpr, SNoexpr)
       | Id s       -> (type_of_identifier s, SId s)
       | Assign(var, e) as ex -> 
           let lt = type_of_identifier var
@@ -126,11 +124,26 @@ let check (globals, functions) =
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
             Add | Sub | Mult | Div when same && t1 = Int   -> Int
-          | Add | Sub | Mult | Div when same && t1 = Float -> Float
-          | Equal | Neq            when same               -> Bool
-          | Less | Leq | Greater | Geq
-                     when same && (t1 = Int || t1 = Float) -> Bool
+          | Eq  | Neq            when same               -> Bool
           | And | Or when same && t1 = Bool -> Bool
+          | Add when same && t1 = Note -> Seq
+          | Mult when same && t1 = Note -> Chord
+          | Eq | Neq when same && t1 = Note -> Bool
+          | Add when same && t1 = Chord -> Seq
+          | Mult when same && t1 = Chord -> Chord
+          | Eq | Neq when same && t1 = Chord -> Bool
+          | Add when same && t1 = Seq -> Seq
+          | Eq | Neq when same && t1 = Seq -> Seq
+          (*mixed types in seq gen after here*)
+          | Add when t1 = Note && t2 = Chord -> Seq
+          | Add when t2 = Note && t1 = Chord -> Seq
+          | Add when t1 = Note && t2 = Seq -> Seq
+          | Add when t2 = Note && t1 = Seq -> Seq
+          | Add when t1 = Chord && t2 = Seq -> Seq 
+          | Add when t2 = Chord && t1 = Seq -> Seq
+          (*mixed types in chord builder after here*)
+          | Mult when t1 = Note && t2 = Chord -> Chord
+          | Mult when t2 = Note && t1 = Chord -> Chord
           | _ -> raise (
 	      Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
