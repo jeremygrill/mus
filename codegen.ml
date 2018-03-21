@@ -112,14 +112,15 @@ let translate (globals, functions) =
     let rec expr builder ((_, e) : sexpr) = match e with
 	      SIntLit i -> L.const_int i32_t i
       | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
-      | SNoteLit (e1, e2, e3) -> 
-    let (t, _) = e1
+      | SNoteLit (e1, e2, e3) -> L.const_int i32_t 5
+(*    let (t, _) = e1
     and e1' = expr builder e1
     and e2' = expr builder e2 
-    and e3' = expr builder e3 in      
-      | SChordLit c -> L.const_int crd_t c
-      | SSeqLit s -> L.const_int seq_t s
-      | SStringLit a -> L.const_int str_t a
+    and e3' = expr builder e3 in 
+    L.const_int e1   *)     
+      | SChordLit c -> L.const_int (* crd_t c *) i32_t 6
+      | SSeqLit s -> L.const_int (* seq_t s *) i32_t 7
+      | SStringLit a -> L.const_int i32_t 5 (* str_t a *)
       | SNoexpr -> L.const_int i32_t 0
       | SId s -> L.build_load (lookup s) s builder
       | SAsn (s, e) -> let e' = expr builder e in
@@ -135,8 +136,8 @@ let translate (globals, functions) =
 	  | A.Mult    -> L.build_mul
 	  | A.Div     -> 
         raise (Failure "internal error: semant should have rejected div on note")
-	  | A.Eq      -> L.build_icmp L.Icmp.Oeq
-	  | A.Neq     -> L.build_icmp L.Icmp.One
+	  | A.Eq      -> L.build_icmp L.Icmp.Eq
+	  | A.Neq     -> L.build_icmp L.Icmp.Ne
 	  | A.Less    -> 
         raise (Failure "internal error: semant should have rejected less than on note")
 	  | A.Leq     -> 
@@ -147,6 +148,8 @@ let translate (globals, functions) =
         raise (Failure "internal error: semant should have rejected geq on note")
 	  | A.Land | A.Lor ->
 	      raise (Failure "internal error: semant should have rejected and/or on note")
+    | A.Comma   -> 
+        raise (Failure "internal error: semant should have rejected comma on note")
 	  ) e1' e2' "tmp" builder 
 	  else if t = A.Chord then (match op with 
       A.Add     -> L.build_add
@@ -155,8 +158,8 @@ let translate (globals, functions) =
     | A.Mult    -> L.build_mul
     | A.Div     -> 
         raise (Failure "internal error: semant should have rejected div on chord")
-    | A.Eq      -> L.build_icmp L.Icmp.Oeq
-    | A.Neq     -> L.build_icmp L.Icmp.One
+    | A.Eq      -> L.build_icmp L.Icmp.Eq
+    | A.Neq     -> L.build_icmp L.Icmp.Ne
     | A.Less    -> 
         raise (Failure "internal error: semant should have rejected less than on chord")
     | A.Leq     -> 
@@ -167,6 +170,8 @@ let translate (globals, functions) =
         raise (Failure "internal error: semant should have rejected geq on chord")
     | A.Land | A.Lor ->
         raise (Failure "internal error: semant should have rejected and/or on chord")
+    | A.Comma   -> 
+        raise (Failure "internal error: semant should have rejected comma on chord")    
     ) e1' e2' "tmp" builder 
     else if t = A.Seq then (match op with 
       A.Add     -> L.build_add
@@ -176,8 +181,8 @@ let translate (globals, functions) =
         raise (Failure "internal error: semant should have rejected mult on seq")
     | A.Div     -> 
         raise (Failure "internal error: semant should have rejected div on seq")
-    | A.Eq      -> L.build_icmp L.Icmp.Oeq
-    | A.Neq     -> L.build_icmp L.Icmp.One
+    | A.Eq      -> L.build_icmp L.Icmp.Eq
+    | A.Neq     -> L.build_icmp L.Icmp.Ne
     | A.Less    -> 
         raise (Failure "internal error: semant should have rejected less than on seq")
     | A.Leq     -> 
@@ -188,6 +193,8 @@ let translate (globals, functions) =
         raise (Failure "internal error: semant should have rejected geq on seq")
     | A.Land | A.Lor ->
         raise (Failure "internal error: semant should have rejected and/or on seq")
+    | A.Comma   -> 
+        raise (Failure "internal error: semant should have rejected comma on seq")    
     ) e1' e2' "tmp" builder 
     else (match op with
 	  | A.Add     -> L.build_add
@@ -202,6 +209,8 @@ let translate (globals, functions) =
 	  | A.Leq     -> L.build_icmp L.Icmp.Sle
 	  | A.Greater -> L.build_icmp L.Icmp.Sgt
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge
+    | A.Comma   ->  
+      raise (Failure "internal error: this isnt working yet lol") (*THIS IS NOT RIGHT, CHANGE LATER*)    
 	  ) e1' e2' "tmp" builder
       | SUnop(op, e) ->
 	  let (t, _) = e in
@@ -210,7 +219,7 @@ let translate (globals, functions) =
 	    A.Neg                  -> L.build_neg
     | A.Not                  -> L.build_not
     | A.Incr                 -> L.build_add 1
-    | A.Decr                 -> L.build_add -1) e' "tmp" builder
+    | A.Dec                  -> L.build_add -1) e' "tmp" builder
     | SCall ("print", [e]) ->
 	  L.build_call print_func [| int_format_str ; (expr builder e) |]
 	    "print" builder
