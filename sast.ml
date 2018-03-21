@@ -11,6 +11,7 @@ and sx =
   | SChordLit of sexpr list
   | SSeqLit of sexpr list
   | SStringLit of string
+  | SId of string
   | SBinop of sexpr * op * sexpr
   | SUnop of unop * sexpr
   | SVariable of string
@@ -22,6 +23,9 @@ type sstmt =
     SBlock of sstmt list
   | SExpr of sexpr
   | SReturn of sexpr
+  | SPlay of sexpr
+  | SFunc of sexpr
+  | SPrint of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
@@ -43,19 +47,20 @@ let rec string_of_sexpr (t, e) =
     SIntLit(l) -> string_of_int l
   | SBoolLit(true) -> "true"
   | SBoolLit(false) -> "false"
+  | SId(s) -> s
   | SVariable(s) -> s
   | SBinop(e1, o, e2) ->
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
-  | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
-  | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
+  | SUnop(o, e) -> string_of_unop o ^ string_of_sexpr e
+  | SAsn(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
-				  ) ^ ")"
   | SNoteLit(e1,e2,e3)-> "(" ^ string_of_sexpr e1 ^ "," ^ string_of_sexpr e2 ^ " | " ^ string_of_sexpr e3 ^ ")"
-  | SChordLit(e1)-> "Chord" (*fix*)
-  | SSeqLit(e1)->"Seq"(*fix*)
+  | SChordLit(e1)-> "Chord" (* ^ string_of_sexpr e1[0]*) (*fix*)
+  | SSeqLit(e1)->"Seq" (* ^ string_of_sexpr e1 *) (*fix*)
   | SStringLit(e1)->e1 
+          ) ^ ")"
 
 
 let rec string_of_sstmt = function

@@ -27,10 +27,10 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context in
-  let str_t      = L.pointer_type i8_t in
-  let n_t        = L.struct_type context [| i32_t ; i32_t ; i32_t |] in  (*check lets/ands if shit gets wacky*)
-  let crd_t      = L.pointer_type n_t  in
-  let seq_t      = L.pointer_type crd_t
+  let str_t      = L.pointer_type i8_t in
+  let n_t        = L.struct_type context [| i32_t ; i32_t ; i32_t |] in (* check lets/ands if shit gets wacky *)
+  let crd_t      = L.pointer_type n_t in
+  let seq_t      = L.pointer_type crd_t
   (* Create an LLVM module -- this is a "container" into which we'll 
      generate actual code *)
   and the_module = L.create_module context "mus" in
@@ -112,13 +112,17 @@ let translate (globals, functions) =
     let rec expr builder ((_, e) : sexpr) = match e with
 	      SIntLit i -> L.const_int i32_t i
       | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
-      | SNoteLit n -> L.const_int n_t n
+      | SNoteLit (e1, e2, e3) -> 
+    let (t, _) = e1
+    and e1' = expr builder e1
+    and e2' = expr builder e2 
+    and e3' = expr builder e3 in      
       | SChordLit c -> L.const_int crd_t c
       | SSeqLit s -> L.const_int seq_t s
-      | SStrLit a -> L.const_int str_t a
+      | SStringLit a -> L.const_int str_t a
       | SNoexpr -> L.const_int i32_t 0
       | SId s -> L.build_load (lookup s) s builder
-      | SAssign (s, e) -> let e' = expr builder e in
+      | SAsn (s, e) -> let e' = expr builder e in
                           let _  = L.build_store e' (lookup s) builder in e'
       | SBinop (e1, op, e2) ->
 	  let (t, _) = e1
