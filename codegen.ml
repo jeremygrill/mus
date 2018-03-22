@@ -121,6 +121,7 @@ let translate (globals, functions) =
       | SChordLit c -> L.const_int (* crd_t c *) i32_t 6
       | SSeqLit s -> L.const_int (* seq_t s *) i32_t 7
       | SStringLit a -> L.const_int i32_t 5 (* str_t a *)
+      | SVariable s -> raise(Failure "not sure what to do here")
       | SNoexpr -> L.const_int i32_t 0
       | SId s -> L.build_load (lookup s) s builder
       | SAsn (s, e) -> let e' = expr builder e in
@@ -218,17 +219,15 @@ let translate (globals, functions) =
 	  (match op with
 	    A.Neg                  -> L.build_neg
     | A.Not                  -> L.build_not
-    | A.Incr                 -> L.build_add 1
-    | A.Dec                  -> L.build_add -1) e' "tmp" builder
+    | A.Incr                 -> raise (Failure "Incr not implemented yet") (*L.build_add i32_t 1*)
+    | A.Dec                  -> raise (Failure "Dec not implemented yet") (*L.build_add i32_t -1*) ) e' "tmp" builder
     | SCall ("print", [e]) ->
 	  L.build_call print_func [| int_format_str ; (expr builder e) |]
 	    "print" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
-	 let result = (match fdecl.styp with 
-                        A.Void -> ""
-                      | _ -> f ^ "_result") in
+	 let result = f ^ "_result" in
          L.build_call fdef (Array.of_list llargs) result builder
     in
     
@@ -252,11 +251,7 @@ let translate (globals, functions) =
 	SBlock sl -> List.fold_left stmt builder sl
         (* Generate code for this expression, return resulting builder *)
       | SExpr e -> let _ = expr builder e in builder 
-      | SReturn e -> let _ = match fdecl.styp with
-                              (* Special "return nothing" instr *)
-                              A.Void -> L.build_ret_void builder 
-                              (* Build return statement *)
-                            | _ -> L.build_ret (expr builder e) builder 
+      | SReturn e -> let _ = L.build_ret (expr builder e) builder 
                      in builder
       (* The order that we create and add the basic blocks for an If statement
       doesnt 'really' matter (seemingly). What hooks them up in the right order
@@ -322,7 +317,8 @@ let translate (globals, functions) =
     let builder = stmt builder (SBlock fdecl.sbody) in
 
     (* Add a return if the last block falls off the end *)
-    add_terminal builder L.build_ret (L.const_int (ltype_of_typ t) 0)
+add_terminal builder (match fdecl.styp with
+        t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
 
   List.iter build_function_body functions;

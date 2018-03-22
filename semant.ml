@@ -20,8 +20,7 @@ let check (globals, functions) =
       and dup_err = "duplicate " ^ kind ^ " " ^ snd binding
       in match binding with
         (* No void bindings *)
-        (Void, _) -> raise (Failure void_err)
-      | (_, n1) -> match checked with
+        (_, n1) -> match checked with
                     (* No duplicate bindings *)
                       ((_, n2) :: _) when n1 = n2 -> raise (Failure dup_err)
                     | _ -> binding :: checked
@@ -39,7 +38,7 @@ let check (globals, functions) =
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls = 
     let add_bind map (name, ty) = StringMap.add name {
-      typ = Void; fname = name; 
+      typ = Int; fname = name; 
       formals = [(ty, "x")];
       locals = []; body = [] } map
     in List.fold_left add_bind StringMap.empty [ ("print", Int) ]
@@ -94,7 +93,7 @@ let check (globals, functions) =
 
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
-        Literal  l -> (Int, SIntLit l)
+        IntLit  l -> (Int, SIntLit l)
       | BoolLit l  -> (Bool, SBoolLit l)
       | NoteLit n  -> (NoteLit n, SNoteLit n) 
       | ChordLit c -> (ChordLit c, SChordLit c)
