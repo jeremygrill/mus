@@ -121,7 +121,6 @@ let translate (globals, functions) =
       | SChordLit c -> L.const_int (* crd_t c *) i32_t 6
       | SSeqLit s -> L.const_int (* seq_t s *) i32_t 7
       | SStringLit a -> L.const_int i32_t 5 (* str_t a *)
-      | SVariable s -> raise(Failure "not sure what to do here")
       | SNoexpr -> L.const_int i32_t 0
       | SId s -> L.build_load (lookup s) s builder
       | SAsn (s, e) -> let e' = expr builder e in
@@ -221,15 +220,12 @@ let translate (globals, functions) =
     | A.Not                  -> L.build_not
     | A.Incr                 -> raise (Failure "Incr not implemented yet") (*L.build_add i32_t 1*)
     | A.Dec                  -> raise (Failure "Dec not implemented yet") (*L.build_add i32_t -1*) ) e' "tmp" builder
-    | SCall ("print", [n]) ->
+    (*| SCall ("print", [n]) ->
     L.build_call print_func [| note_format_str ; (expr builder n) |]
       "print" builder
       |SCall (f, args) ->
-        let (fdef, fdecl) = StringMap.find f function_decls in
-    let llargs = List.rev (List.map (expr builder) (List.rev args)) in
-    let result = f ^ "_result" in
-          L.build_call fdef (Array.of_list llargs) result builder in
-    | SCall ("print", [e]) ->
+        let (fdef, fdecl) = StringMap.find f function_decls *)
+    | SCall ("print", [e]) -> 
 	  L.build_call print_func [| int_format_str ; (expr builder e) |]
 	    "print" builder
       | SCall (f, args) ->
