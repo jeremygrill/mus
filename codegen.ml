@@ -225,7 +225,10 @@ let translate (globals, functions) =
     L.build_call print_func [| note_format_str ; (expr builder n) |]
       "print" builder
       |SCall (f, args) ->
-        let (fdef, fdecl) = StringMap.find f function_decls 
+        let (fdef, fdecl) = StringMap.find f function_decls in
+    let llargs = List.rev (List.map (expr builder) (List.rev args)) in
+    let result = f ^ "_result" in
+          L.build_call fdef (Array.of_list llargs) result builder in
     | SCall ("print", [e]) ->
 	  L.build_call print_func [| int_format_str ; (expr builder e) |]
 	    "print" builder
