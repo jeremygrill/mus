@@ -95,17 +95,21 @@ let check (globals, functions) =
     let rec expr = function
         IntLit  l -> (Int, SIntLit l)
       | BoolLit l  -> (Bool, SBoolLit l)
-      | NoteLit (n1, n2, n3)  -> (NoteLit n1, NoteLit n2, NoteLit n3, SNoteLit n1, SNoteLit n2, SNoteLit n3) 
+      | NoteLit (n1, n2, n3) as ex -> (*(NoteLit n1, NoteLit n2, NoteLit n3) (SNoteLit n1, SNoteLit n2, SNoteLit n3)*) 
+          let (t1, n1') = expr n1  
+          and (t2, n2') = expr n2 
+          and (t3, n3') = expr n3 
+          in (t1, SNoteLit((t1,n1'),(t2,n2;),(t3,n3')) (*help: is t1 right here*)
       | ChordLit c -> (ChordLit c, SChordLit c)
       | SeqLit s   -> (SeqLit s, SSeqLit s)
       | Noexpr     -> (Noexpr, SNoexpr)
       | Id s       -> (type_of_identifier s, SId s)
-      | Assign(var, e) as ex -> 
+      | Asn(var, e) as ex -> 
           let lt = type_of_identifier var
           and (rt, e') = expr e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^ 
             string_of_typ rt ^ " in " ^ string_of_expr ex
-          in (check_assign lt rt err, SAssign(var, (rt, e')))
+          in (check_assign lt rt err, SAsn(var, (rt, e')))
       | Unop(op, e) as ex -> 
           let (t, e') = expr e in
           let ty = match op with

@@ -17,7 +17,7 @@ type expr =
 	| StringLit of string
 	| Binop of expr * op * expr
 	| Unop of unop * expr
-	| Variable of string
+	| Id of string
 	| Asn of string * expr
 	| Call of string * expr list
 	| Noexpr
@@ -60,7 +60,7 @@ let rec string_of_expr = function
     IntLit(l) -> string_of_int l
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
-  | Variable(s) -> s
+  | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_unop o ^ string_of_expr e
@@ -100,7 +100,7 @@ let string_of_typ = function
   | Seq -> "Seq"
   | String -> "String"
 
-let string_of_vdecl (t, variable) = string_of_typ t ^ " " ^ variable ^ ";\n"
+let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
 type func_decl = {
 	typ	: typ;
