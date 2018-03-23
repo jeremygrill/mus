@@ -221,6 +221,11 @@ let translate (globals, functions) =
     | A.Not                  -> L.build_not
     | A.Incr                 -> raise (Failure "Incr not implemented yet") (*L.build_add i32_t 1*)
     | A.Dec                  -> raise (Failure "Dec not implemented yet") (*L.build_add i32_t -1*) ) e' "tmp" builder
+    | SCall ("print", [n]) ->
+    L.build_call print_func [| note_format_str ; (expr builder n) |]
+      "print" builder
+      |SCall (f, args) ->
+        let (fdef, fdecl) = StringMap.find f function_decls 
     | SCall ("print", [e]) ->
 	  L.build_call print_func [| int_format_str ; (expr builder e) |]
 	    "print" builder
