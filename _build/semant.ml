@@ -95,7 +95,7 @@ let check (globals, functions) =
     let rec expr = function
         IntLit  l -> (Int, SIntLit l)
       | BoolLit l  -> (Bool, SBoolLit l)
-      | NoteLit (n1, n2, n3)  -> (NoteLit n1, NoteLit n2, NoteLit n3, SNoteLit n1, SNoteLit n2, SNoteLit n3) 
+      | NoteLit (n1, n2, n3)  -> ((NoteLit n1; NoteLit n2; NoteLit n3), (SNoteLit n1; SNoteLit n2; SNoteLit n3)) 
       | ChordLit c -> (ChordLit c, SChordLit c)
       | SeqLit s   -> (SeqLit s, SSeqLit s)
       | Noexpr     -> (Noexpr, SNoexpr)
