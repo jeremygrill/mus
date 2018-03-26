@@ -66,7 +66,7 @@ let check (globals, functions) =
     with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
 
-  let _ = find_func "main" in (* Ensure "main" is defined *)
+  let _ = find_func "run" in (* Ensure "run" is defined *)
 
   let check_function func =
     (* Make sure no formals or locals are void or duplicates *)

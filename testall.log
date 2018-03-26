@@ -1,0 +1,50 @@
+
+###### Testing test-1
+./toplevel.native tests/test-1.mus > test-1.out
+Fatal error: exception Failure("unrecognized function main")
+###### FAILED
+
+###### Testing test-2
+./toplevel.native tests/test-2.mus > test-2.out
+Fatal error: exception Failure("unrecognized function main")
+###### FAILED
+
+###### Testing test-3
+./toplevel.native tests/test-3.mus > test-3.out
+Fatal error: exception Failure("unrecognized function main")
+###### FAILED
+
+###### Testing test-4
+./toplevel.native tests/test-4.mus > test-4.out
+Fatal error: exception Failure("unrecognized function main")
+###### FAILED
+
+###### Testing test-5
+./toplevel.native tests/test-5.mus > test-5.out
+Fatal error: exception Failure("unrecognized function main")
+###### FAILED
+
+###### Testing fail-1
+./toplevel.native < tests/fail-1.mus 2> fail-1.err >> testall.log
+diff fail-1.err tests/fail-1.err > fail-1.diff
+###### SUCCESS
+
+###### Testing fail-2
+./toplevel.native < tests/fail-2.mus 2> fail-2.err >> testall.log
+diff fail-2.err tests/fail-2.err > fail-2.diff
+###### SUCCESS
+
+###### Testing fail-3
+./toplevel.native < tests/fail-3.mus 2> fail-3.err >> testall.log
+diff fail-3.err tests/fail-3.err > fail-3.diff
+###### SUCCESS
+
+###### Testing fail-4
+./toplevel.native < tests/fail-4.mus 2> fail-4.err >> testall.log
+diff fail-4.err tests/fail-4.err > fail-4.diff
+###### SUCCESS
+
+###### Testing fail-5
+./toplevel.native < tests/fail-5.mus 2> fail-5.err >> testall.log
+diff fail-5.err tests/fail-5.err > fail-5.diff
+###### SUCCESS
