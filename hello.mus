@@ -1,4 +1,10 @@
 Int run(){
+<<<<<<< HEAD
 	print("Hello World\n");
 	return 0;
 }
+=======
+	print("Hello, World!");
+	return 1;
+}
+>>>>>>> 3781bc4cb9e945e2d981429c22300033b1941fa3
