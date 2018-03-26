@@ -1,6 +1,5 @@
 Int run()
 {
 	Int i;
-	print(1);
 	return 0;
 }

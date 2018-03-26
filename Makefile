@@ -6,7 +6,7 @@
 
 .PHONY : run
 run: all
-	./toplevel.native hello.mus > hello.ll
+	./toplevel.native tests/hello.mus > tests/hello.ll
 
 .PHONY : all
 all : toplevel.native
@@ -25,6 +25,7 @@ clean :
 	rm -rf testall.log *.diff toplevel scanner.ml parser.ml parser.mli
 	rm -rf hello
 	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll *.out *.exe
+	rm -rf tests/*.ll
 
 # More detailed: build using ocamlc/ocamlopt + ocamlfind to locate LLVM
 

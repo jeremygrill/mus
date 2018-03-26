@@ -37,10 +37,10 @@ let translate (_, functions) =
   in
 
   (* Declare a "printf" function to implement MicroC's "print". *)
-  let print_t : L.lltype = 
+  let printf_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
-     L.declare_function "printf" print_t the_module in 
+     L.declare_function "printf" printf_t the_module in 
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
