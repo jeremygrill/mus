@@ -1,13 +1,6 @@
-<<<<<<< HEAD
-"hello";
-=======
-Int run(){
-<<<<<<< HEAD
-	print("Hello World\n");
+Int run()
+{
+	Int i;
+	print(1);
 	return 0;
 }
-=======
-	print("Hello, World!");
-	return 1;
-}
->>>>>>> 3781bc4cb9e945e2d981429c22300033b1941fa3

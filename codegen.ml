@@ -37,10 +37,10 @@ let translate (_, functions) =
   in
 
   (* Declare a "printf" function to implement MicroC's "print". *)
-  let printf_t : L.lltype = 
+  let print_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
-  let printf_func : L.llvalue = 
-     L.declare_function "printf" printf_t the_module in 
+  let print_func : L.llvalue = 
+     L.declare_function "print" print_t the_module in 
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
@@ -58,8 +58,8 @@ let translate (_, functions) =
     let rec expr builder ((_, e) : sexpr) = match e with
   SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
       | SCall ("print", [e]) -> (* Generate a call instruction *)
-    L.build_call printf_func [| int_format_str ; (expr builder e) |]
-      "printf" builder 
+    L.build_call print_func [| int_format_str ; (expr builder e) |]
+      "print" builder 
       (* Throw an error for any other expressions *)
       | _ -> to_imp (string_of_sexpr (A.Int,e))  
     in

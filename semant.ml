@@ -94,7 +94,7 @@ let check (globals, functions) =
     (* Return a semantically-checked expression, i.e., with a type *)
     let expr = function (*removed rec for error--maybe come back*)
         IntLit l -> (Int, SIntLit l)
-      | _ -> raise (Failure "bad")
+      | _ -> raise (Failure "bad!!!!")
     in
 
     let check_bool_expr e = 
@@ -127,7 +127,7 @@ let check (globals, functions) =
             | []              -> []
           in SBlock(check_stmt_list sl)
 
-      | _ -> raise (Failure "bad")
+      | _ -> raise (Failure "bad!")
 
     in (* body of check_function *)
     { styp = func.typ;
