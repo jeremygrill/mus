@@ -92,8 +92,10 @@ let check (globals, functions) =
 
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let expr = function (*removed rec for error--maybe come back*)
+    let rec expr = function
         IntLit l -> (Int, SIntLit l)
+      | StringLit l -> (String, SStringLit l)
+      | BoolLit l  -> (Bool, SBoolLit l)
       | _ -> raise (Failure "bad!!!!")
     in
 

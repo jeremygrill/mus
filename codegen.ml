@@ -40,7 +40,7 @@ let translate (_, functions) =
   let printf_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
-     L.declare_function "printf" printf_t the_module in 
+     L.declare_function "print" printf_t the_module in 
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
@@ -56,7 +56,7 @@ let translate (_, functions) =
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
     (* Generate LLVM code for a call to MicroC's "print" *)
     let rec expr builder ((_, e) : sexpr) = match e with
-  SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
+        SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
       | SCall ("print", [e]) -> (* Generate a call instruction *)
     L.build_call printf_func [| int_format_str ; (expr builder e) |]
       "print" builder 

@@ -15,6 +15,7 @@ rule tokenize = parse
 | ',' { COMMA }
 | '=' { ASSIGN }
 | '$' { LSEQ }
+| '"' { QUOTE }
 | "!=" { NEQUALS }
 | "==" { EQUALS }
 | "++" { INCR }
