@@ -1,0 +1,5 @@
+Int run()
+{
+  Int i;
+  return 0;
+}
