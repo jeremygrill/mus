@@ -44,11 +44,11 @@ let translate (_, functions) =
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
-  (* Generate the instructions for a trivial "main" function *)
+  (* Generate the instructions for a trivial "run" function *)
   let build_function fdecl =
-    (* Make the LLVM module "aware" of the main function *)
-    let main_ty = L.function_type (ltype_of_typ fdecl.styp) [||] in
-    let the_function = L.define_function "main" main_ty the_module in
+    (* Make the LLVM module "aware" of the run function *)
+    let run_ty = L.function_type (ltype_of_typ fdecl.styp) [||] in
+    let the_function = L.define_function "run" run_ty the_module in
     (* Create an Instruction Builder, which points into a basic block
       and determines where the next instruction should be placed *)
     let builder = L.builder_at_end context (L.entry_block the_function) in
