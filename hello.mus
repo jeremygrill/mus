@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+"hello";
+=======
 Int run(){
 <<<<<<< HEAD
 	print("Hello World\n");
