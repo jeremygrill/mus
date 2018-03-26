@@ -10,7 +10,7 @@
 %token <int> INTLIT 
 %token <bool> BOOLLIT 
 %token <string> STRINGLIT 
-%token <string> VARIABLE
+%token <string> ID
 %token NOELSE ELSE WHILE FUNC FOR 
 %token PLAY PRINT
 %token EQUALS NEQUALS SEMI
@@ -41,7 +41,7 @@ decls:
  | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
 fdecl:
-   typ VARIABLE LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+   typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      { { typ = $1;
 	 fname = $2;
 	 formals = $4;
@@ -53,8 +53,8 @@ formals_opt:
   | formal_list   { List.rev $1 }
 
 formal_list:
-    typ VARIABLE                   { [($1,$2)]     }
-  | formal_list COMMA typ VARIABLE { ($3,$4) :: $1 }
+    typ ID                   { [($1,$2)]     }
+  | formal_list COMMA typ ID { ($3,$4) :: $1 }
 
 typ:
     INT    { Int    }
@@ -69,7 +69,7 @@ vdecl_list:
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   typ VARIABLE SEMI { ($1, $2) }
+   typ ID SEMI { ($1, $2) }
 
 stmt_list:
     /* nothing */  { [] }
@@ -95,13 +95,13 @@ expr:
   INTLIT                { IntLit($1) }
 | BOOLLIT               { BoolLit($1) }
 | STRINGLIT             { StringLit($1) }
-| VARIABLE              { Variable($1) }
+| ID                    { Id($1) }
 | expr PLUS expr        { Binop($1, Add, $3) }
 | expr MINUS expr       { Binop($1, Sub, $3) }
 | expr TIMES expr       { Binop($1, Mult, $3) }
 | expr DIVIDE expr      { Binop($1, Div, $3) }
 | expr COMMA expr       { Binop($1, Comma, $3) }
-| VARIABLE ASSIGN expr  { Asn($1, $3) }
+| ID ASSIGN expr        { Asn($1, $3) }
 | expr NEQUALS expr     { Binop($1, Neq, $3) }
 | expr EQUALS expr      { Binop($1, Eq, $3) }
 | INCR expr             { Unop(Incr, $2) }

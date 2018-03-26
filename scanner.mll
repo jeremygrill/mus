@@ -50,7 +50,7 @@ rule tokenize = parse
 | "print" { PRINT }
 | digits as lit { INTLIT(int_of_string lit) }
 | eof { EOF }
-| ['a'-'z']+ as var { VARIABLE(var) }
+| ['a'-'z']+ as var { ID(var) }
 
 and comment = parse
 '\n' { tokenize lexbuf }

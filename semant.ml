@@ -92,8 +92,8 @@ let check (globals, functions) =
 
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec expr = function
-        StringLit  l -> (StringLit, SStringLit l)
+    let expr = function (*removed rec for error--maybe come back*)
+        IntLit l -> (Int, SIntLit l)
       | _ -> raise (Failure "bad")
     in
 
@@ -110,12 +110,12 @@ let check (globals, functions) =
       | For(e1, e2, e3, st) ->
 	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
-      | Return e -> let (t, e') = expr e in
+      | Return e -> let (t, e') = expr e in 
         if t = func.typ then SReturn (t, e') 
         else raise (
 	  Failure ("return gives " ^ string_of_typ t ^ " expected " ^
 		   string_of_typ func.typ ^ " in " ^ string_of_expr e))
-	    
+
 	    (* A block is correct if each statement is correct and nothing
 	       follows any Return statement.  Nested blocks are flattened. *)
       | Block sl -> 
@@ -126,6 +126,8 @@ let check (globals, functions) =
             | s :: ss         -> check_stmt s :: check_stmt_list ss
             | []              -> []
           in SBlock(check_stmt_list sl)
+
+      | _ -> raise (Failure "bad")
 
     in (* body of check_function *)
     { styp = func.typ;

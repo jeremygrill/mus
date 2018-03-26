@@ -56,7 +56,7 @@ let translate (_, functions) =
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
     (* Generate LLVM code for a call to MicroC's "print" *)
     let rec expr builder ((_, e) : sexpr) = match e with
-  SStringLit i -> L.const_int i32_t i (* Generate a constant integer *)
+  SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
       | SCall ("print", [e]) -> (* Generate a call instruction *)
     L.build_call printf_func [| int_format_str ; (expr builder e) |]
       "printf" builder 
