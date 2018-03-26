@@ -127,6 +127,7 @@ let check (globals, functions) =
             | []              -> []
           in SBlock(check_stmt_list sl)
 
+      | Print(l) -> SPrint(expr l)
       | _ -> raise (Failure "bad!")
 
     in (* body of check_function *)
