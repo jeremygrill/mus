@@ -1,6 +1,8 @@
 Int run()
 {
 	Int i;
-	print(88);
+	Note a;
+	//a = 1; //(1,2|3);
+	//print(88);
 	return 0;
 }
