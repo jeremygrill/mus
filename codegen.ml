@@ -55,12 +55,55 @@ let translate (_, functions) =
     let builder = L.builder_at_end context (L.entry_block the_function) in
     (* Create a pointer to a format string for printf *)
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
+
+    (* Return the value for a variable or formal argument. First check
+     * locals, then globals *)
+    let lookup n = try StringMap.find n local_vars
+                   with Not_found -> StringMap.find n global_vars
+    in    
+
     (* Generate LLVM code for a call to MicroC's "print" *)
     let rec expr builder ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
       | SCall ("print", [e]) -> (* Generate a call instruction *)
     L.build_call printf_func [| int_format_str ; (expr builder e) |]
       "print" builder 
+      | SBinop (e1, op, e2) ->
+    let (t, _) = e1
+    and e1' = expr builder e1
+    and e2' = expr builder e2 in
+    if t = A.Int then (match op with 
+    | A.Add     -> L.build_add
+    | A.Sub     -> L.build_sub
+    | A.Mult    -> L.build_mul
+    | A.Div     -> L.build_sdiv
+    | A.Land    -> L.build_and
+    | A.Lor     -> L.build_or
+    | A.Eq      -> L.build_icmp L.Icmp.Eq
+    | A.Neq     -> L.build_icmp L.Icmp.Ne
+    | A.Less    -> L.build_icmp L.Icmp.Slt
+    | A.Leq     -> L.build_icmp L.Icmp.Sle
+    | A.Greater -> L.build_icmp L.Icmp.Sgt
+    | A.Geq     -> L.build_icmp L.Icmp.Sge
+    | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
+    ) e1' e2' "tmp" builder 
+    else (match op with
+    | A.Add     -> L.build_add
+    | A.Sub     -> L.build_sub
+    | A.Mult    -> L.build_mul
+    | A.Div     -> L.build_sdiv
+    | A.Land    -> L.build_and
+    | A.Lor     -> L.build_or
+    | A.Eq      -> L.build_icmp L.Icmp.Eq
+    | A.Neq     -> L.build_icmp L.Icmp.Ne
+    | A.Less    -> L.build_icmp L.Icmp.Slt
+    | A.Leq     -> L.build_icmp L.Icmp.Sle
+    | A.Greater -> L.build_icmp L.Icmp.Sgt
+    | A.Geq     -> L.build_icmp L.Icmp.Sge
+    | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
+    ) e1' e2' "tmp" builder
+      | SAsn (s, e) -> let e' = expr builder e in
+                       let _  = L.build_store e' (lookup s) builder in e'
       (* Throw an error for any other expressions *)
       | _ -> to_imp (string_of_sexpr (A.Int,e))  
     in

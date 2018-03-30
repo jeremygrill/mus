@@ -1,8 +1,10 @@
 Int run()
 {
 	Int i;
+	Int j;
 	Note a;
-	//a = 1; //(1,2|3);
+	4 + 2;
+	a = 1; //(1,2|3);
 	//print(88);
 	return 0;
 }

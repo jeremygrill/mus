@@ -96,6 +96,30 @@ let check (globals, functions) =
         IntLit l -> (Int, SIntLit l)
       | StringLit l -> (String, SStringLit l)
       | BoolLit l  -> (Bool, SBoolLit l)
+      | Asn(var, e) as ex -> 
+          let lt = type_of_identifier var
+          and (rt, e') = expr e in
+          let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^ 
+            string_of_typ rt ^ " in " ^ string_of_expr ex
+          in (check_assign lt rt err, SAsn(var, (rt, e')))
+      | Binop(e1, op, e2) as e -> 
+          let (t1, e1') = expr e1 
+          and (t2, e2') = expr e2 in
+          (* All binary operators require operands of the same type *)
+          let same = t1 = t2 in
+          (* Determine expression type based on operator and operand types *)
+          let ty = match op with
+            Add | Sub | Mult | Div when same && t1 = Int   -> Int
+          | Eq | Neq               when same               -> Bool
+          | Less | Leq | Greater | Geq
+                       when same && (t1 = Int)             -> Bool
+          | Land | Lor when same && t1 = Bool              -> Bool
+          | _ -> raise (
+        Failure ("illegal binary operator " ^
+                       string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
+                       string_of_typ t2 ^ " in " ^ string_of_expr e))
+          in (ty, SBinop((t1, e1'), op, (t2, e2')))
+
       | _ -> raise (Failure "bad!!!!")
     in
 
