@@ -2,7 +2,7 @@
 
 %{ open Ast %}
 
-%token LT GT LEQ GEQ NEG LAND LOR LBRACE RBRACE LINE LSQUARE RSQUARE LSEQ QUOTE
+%token LT GT LEQ GEQ NEG LAND LOR LBRACE RBRACE LINE LSQUARE RSQUARE LSEQ QUOTE TRUE FALSE
 %token PLUS MINUS TIMES DIVIDE INCR DEC
 %token EOF COMMA ASSIGN LPAREN RPAREN
 %token LBRACKET RBRACKET INT BOOL NOTE STRING
@@ -12,7 +12,7 @@
 %token <string> STRINGLIT 
 %token <string> ID
 %token NOELSE ELSE WHILE FUNC FOR 
-%token PLAY PRINT
+%token PLAY
 %token EQUALS NEQUALS SEMI
 
 %start program
@@ -80,8 +80,6 @@ stmt:
 | expr SEMI                 { Expr $1 }
 | RETURN expr SEMI          { Return $2 }
 | PLAY LPAREN expr RPAREN SEMI   { Play $3 }
-| FUNC LPAREN expr RPAREN SEMI   { Func $3 }
-| PRINT LPAREN expr RPAREN SEMI  { Print $3 }
 | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
 | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
 | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt { For($3, $5, $7, $9) }
@@ -102,6 +100,7 @@ expr:
 | expr DIVIDE expr      { Binop($1, Div, $3) }
 | expr COMMA expr       { Binop($1, Comma, $3) }
 | ID ASSIGN expr        { Asn($1, $3) }
+| ID LPAREN args_opt RPAREN { Call($1, $3)  }
 | expr NEQUALS expr     { Binop($1, Neq, $3) }
 | expr EQUALS expr      { Binop($1, Eq, $3) }
 | INCR expr             { Unop(Incr, $2) }
@@ -118,6 +117,8 @@ expr:
 | LSQUARE args_opt RSQUARE  { ChordLit($2) }
 | LSEQ LPAREN args_opt RPAREN    { SeqLit($3) }
 | QUOTE expr QUOTE      { $2 }
+| TRUE                  { BoolLit(true) }
+| FALSE                 { BoolLit(false) }
 
 
 args_opt:

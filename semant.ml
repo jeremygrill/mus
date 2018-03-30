@@ -95,6 +95,11 @@ let check (globals, functions) =
     let rec expr = function
         IntLit l -> (Int, SIntLit l)
       | StringLit l -> (String, SStringLit l)
+      | NoteLit (n1, n2, n3) as ex -> 
+          let (t1, n1') = expr n1  
+          and (t2, n2') = expr n2 
+          and (t3, n3') = expr n3 
+          in (t1, SNoteLit((t1,n1'),(t2,n2'),(t3,n3'))) 
       | BoolLit l  -> (Bool, SBoolLit l)
       | Asn(var, e) as ex -> 
           let lt = type_of_identifier var
@@ -119,7 +124,20 @@ let check (globals, functions) =
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
-
+      | Call(fname, args) as call -> 
+          let fd = find_func fname in
+          let param_length = List.length fd.formals in
+          if List.length args != param_length then
+            raise (Failure ("expecting " ^ string_of_int param_length ^ 
+                            " arguments in " ^ string_of_expr call))
+          else let check_call (ft, _) e = 
+            let (et, e') = expr e in 
+            let err = "illegal argument found " ^ string_of_typ et ^
+              " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+            in (check_assign ft et err, e')
+          in 
+          let args' = List.map2 check_call fd.formals args
+          in (fd.typ, SCall(fname, args'))
       | _ -> raise (Failure "bad!!!!")
     in
 
@@ -152,8 +170,6 @@ let check (globals, functions) =
             | s :: ss         -> check_stmt s :: check_stmt_list ss
             | []              -> []
           in SBlock(check_stmt_list sl)
-
-      | Print(l) -> SPrint(expr l)
       | _ -> raise (Failure "bad!")
 
     in (* body of check_function *)

@@ -27,8 +27,7 @@ type stmt =
   | Expr of expr
   | Return of expr
   | Play of expr
-  | Func of expr 
-  | Print of expr
+  (*| Func of string * expr*)
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
@@ -80,8 +79,7 @@ let rec string_of_stmt = function
   | Expr(expr) -> string_of_expr expr ^ ";\n";
   | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
   | Play(expr) -> "play " ^ string_of_expr expr ^ ";\n";
-  | Func(expr) -> "func " ^ string_of_expr expr ^ ";\n";
-  | Print(expr) -> "print " ^ string_of_expr expr ^ ";\n";
+  (*| Func(e1, e2) -> e1 ^ " " ^ string_of_expr e2 ^ ";\n";*)
   | If(e, s, Block([])) -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2

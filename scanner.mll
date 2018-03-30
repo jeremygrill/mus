@@ -46,9 +46,9 @@ rule tokenize = parse
 | "else" { ELSE }
 | "while" { WHILE }
 | "for" { FOR }
-| "func" { FUNC }
 | "play" { PLAY }
-| "print" { PRINT }
+| "true" { TRUE }
+| "false" { FALSE }
 | digits as lit { INTLIT(int_of_string lit) }
 | eof { EOF }
 | ['a'-'z']+ as var { ID(var) }

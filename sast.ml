@@ -23,8 +23,7 @@ type sstmt =
   | SExpr of sexpr
   | SReturn of sexpr
   | SPlay of sexpr
-  | SFunc of sexpr
-  | SPrint of sexpr
+  (*| SFunc of string * sexpr*)
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
@@ -67,8 +66,7 @@ let rec string_of_sstmt = function
   | SExpr(expr) -> string_of_sexpr expr ^ ";\n";
   | SReturn(expr) -> "return " ^ string_of_sexpr expr ^ ";\n";
   | SPlay(expr) -> "play " ^ string_of_sexpr expr ^ ";\n";
-  | SFunc(expr) -> "func " ^ string_of_sexpr expr ^ ";\n";
-  | SPrint(expr) -> "print " ^ string_of_sexpr expr ^ ";\n";
+ (* | SFunc(e1, e2) -> e1 ^ " " ^ string_of_sexpr e2 ^ ";\n"; *)
   | SIf(e, s, SBlock([])) ->
       "if (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^
