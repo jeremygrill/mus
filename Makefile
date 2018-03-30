@@ -6,7 +6,7 @@
 
 .PHONY : run
 run: all
-	./toplevel.native tests/hello.mus > tests/hello.ll
+	./toplevel.native tests/hello.mus
 
 .PHONY : all
 all : toplevel.native
