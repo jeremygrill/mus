@@ -108,19 +108,16 @@ let translate (globals, functions) =
     (* Generate LLVM code for a call to MicroC's "print" *)
     let rec expr builder ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
-      | SNoteLit (n1, n2, n3) -> 
-    let n1' = expr builder n1
-    and n2' = expr builder n2
-    and n3' = expr builder n3 in
-    (*
-          i1' = (match n1' with
-        | A.Int     -> n1' lsl 16
-        | _         -> L.const_int i32_t 0 ) and
-          i2' = (match n2' with
-        | A.Int     -> n2' lsl 8
-        | _         -> L.const_int i32_t 0 ) in 
-    *)
-    L.build_or n1' n2' "tmp" builder
+      | SNoteLit (n1, n2, n3) ->
+    let n1' = expr builder n1  (* 8 bits of n1 (pitch) *)
+    and n2' = expr builder n2  (* 8 bits of n2 (velocity) *)
+    and n3' = expr builder n3  (* 16 bits of n3 (duration) *)
+    and n1shift' = expr builder (Int, SIntLit 16777216)  (* shift 24 bits *)
+    and n2shift' = expr builder (Int, SIntLit 65536) in  (* shift 16 bits *)
+    let i1' = (L.build_mul n1' n1shift' "tmp" builder)  
+    and i2' = (L.build_mul n2' n2shift' "tmp" builder) in
+    let n12' = (L.build_or i1' i2' "tmp" builder) in 
+    L.build_or n3' n12' "tmp" builder 
       | SCall ("print", [e]) -> (* Generate a call instruction *)
     L.build_call printf_func [| int_format_str ; (expr builder e) |]
       "print" builder 

@@ -99,7 +99,7 @@ let check (globals, functions) =
           let (t1, n1') = expr n1  
           and (t2, n2') = expr n2 
           and (t3, n3') = expr n3 
-          in (t1, SNoteLit((t1,n1'),(t2,n2'),(t3,n3'))) 
+          in (Note, SNoteLit((t1,n1'),(t2,n2'),(t3,n3'))) 
       | BoolLit l  -> (Bool, SBoolLit l)
       | Asn(var, e) as ex -> 
           let lt = type_of_identifier var
