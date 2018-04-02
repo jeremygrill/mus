@@ -130,7 +130,16 @@ let check (globals, functions) =
           match ty with
             Note -> Chord
           | _    -> raise (Failure("Chords can only contain Notes"))
-        in (Chord, SChordLit c1)
+        in let t = List.fold_left
+        (fun ty1 ty2 ->
+          if (ty1 == expr ty2) then
+            ty1
+          else raise
+            (Failure("Multiple types inside Chord"))
+        )
+                    (expr (List.hd c1)) (List.tl c1) in
+           let (t', _) = t in 
+           t
       | Call(fname, args) as call -> 
           let fd = find_func fname in
           let param_length = List.length fd.formals in
