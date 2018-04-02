@@ -68,7 +68,7 @@ let rec string_of_expr = function
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
   | NoteLit(e1, e2, e3) -> "(" ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ " | " ^ string_of_expr e3 ^ ")"
-  | ChordLit(e1) -> "Chord"
+  | ChordLit(e1) -> "[" ^ String.concat "" (List.map string_of_expr e1) ^ "]"
   | SeqLit(e1) -> "Seq"
   | StringLit(e1) -> e1
 
