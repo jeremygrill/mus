@@ -95,6 +95,7 @@ let check (globals, functions) =
     let rec expr = function
         IntLit l -> (Int, SIntLit l)
       | StringLit l -> (String, SStringLit l)
+      | Id s       -> (type_of_identifier s, SId s)
       | NoteLit (n1, n2, n3) as ex -> 
           let (t1, n1') = expr n1  
           and (t2, n2') = expr n2 
@@ -138,7 +139,8 @@ let check (globals, functions) =
           in 
           let args' = List.map2 check_call fd.formals args
           in (fd.typ, SCall(fname, args'))
-      | _ -> raise (Failure "bad!!!!")
+      | _ -> raise (Failure "bad!!!!") 
+
     in
 
     let check_bool_expr e = 
@@ -146,6 +148,8 @@ let check (globals, functions) =
       and err = "expected Boolean expression in " ^ string_of_expr e
       in if t' != Bool then raise (Failure err) else (t', e') 
     in
+
+
 
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt = function

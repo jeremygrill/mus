@@ -9,6 +9,6 @@ Int run()
 	//b = true;
 	a = (1,2|3);
 	//print(88);
-	//print(i);
+	print(i);
 	return 0;
 }

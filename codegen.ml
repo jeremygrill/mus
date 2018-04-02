@@ -36,7 +36,7 @@ let translate (globals, functions) =
       A.Int   -> i32_t
     | A.Note  -> i32_t
     | A.Bool  -> i1_t
-    | t -> raise (Failure ("Type " ^ A.string_of_typ t ^ " not implemented yet"))
+    (*| t -> raise (Failure ("Type " ^ A.string_of_typ t ^ " not implemented yet"))*)
   in
 
   (* Declare each global variable; remember its value in a map *)
@@ -105,7 +105,7 @@ let translate (globals, functions) =
     in
 
 
-    (* Generate LLVM code for a call to MicroC's "print" *)
+    (* Generate LLVM code for a call to Mus's "print" *)
     let rec expr builder ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
       | SNoteLit (n1, n2, n3) ->
@@ -117,10 +117,8 @@ let translate (globals, functions) =
     let i1' = (L.build_mul n1' n1shift' "tmp" builder)  
     and i2' = (L.build_mul n2' n2shift' "tmp" builder) in
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
-    L.build_or n3' n12' "tmp" builder 
-      | SCall ("print", [e]) -> (* Generate a call instruction *)
-    L.build_call printf_func [| int_format_str ; (expr builder e) |]
-      "print" builder 
+       L.build_or n3' n12' "tmp" builder 
+      | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "print" builder 
       | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1
@@ -158,6 +156,7 @@ let translate (globals, functions) =
       | SAsn (s, e) -> let e' = expr builder e in
                        let _  = L.build_store e' (lookup s) builder in e'
       (* Throw an error for any other expressions *)
+      | SId s -> L.build_load (lookup s) s builder
       | _ -> to_imp (string_of_sexpr (A.Int,e))  
     in
     (* Deal with a block of expression statements, terminated by a return *)
