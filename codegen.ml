@@ -119,6 +119,9 @@ let translate (globals, functions) =
     and i2' = (L.build_mul n2' n2shift' "tmp" builder) in
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
+       | SChordLit l1 ->
+      let l1' = expr builder (Int, SIntLit 0) in
+      L.build_array_alloca i32_t l1' "tmp" builder
       | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "print" builder 
       | SBinop (e1, op, e2) ->
     let (t, _) = e1
