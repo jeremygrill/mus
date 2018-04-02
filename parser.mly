@@ -114,7 +114,8 @@ expr:
 | expr GEQ expr         { Binop($1, Geq, $3) }
 | LPAREN expr RPAREN    { $2 }
 | LPAREN expr COMMA expr LINE expr RPAREN { NoteLit($2, $4, $6) }
-| LSQUARE args_opt RSQUARE  { ChordLit($2) }
+/*| LSQUARE args_list RSQUARE  { ChordLit($2) }*/
+| ID LSQUARE args_opt RSQUARE { ChordLit($1, $3)  }
 | LSEQ LPAREN args_opt RPAREN    { SeqLit($3) }
 | QUOTE expr QUOTE      { $2 }
 | TRUE                  { BoolLit(true) }

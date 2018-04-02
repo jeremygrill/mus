@@ -125,21 +125,10 @@ let check (globals, functions) =
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
-      | ChordLit c1 -> 
-          let arr_typ ty =
-          match ty with
-            Note -> Chord
-          | _    -> raise (Failure("Chords can only contain Notes"))
-        in let t = List.fold_left
-        (fun ty1 ty2 ->
-          if (ty1 == expr ty2) then
-            ty1
-          else raise
-            (Failure("Multiple types inside Chord"))
-        )
-                    (expr (List.hd c1)) (List.tl c1) in
-           let (t', _) = t in 
-           t
+      | ChordLit(args) as chord -> 
+          let lt = type_of_identifier var
+          and args' = List.map expr args in
+          (lt, SChordLit(args'))
       | Call(fname, args) as call -> 
           let fd = find_func fname in
           let param_length = List.length fd.formals in

@@ -11,7 +11,7 @@ Int run()
 	//b = true;
 	a = (1,2|3);
 	n = (6,7|8);
-	c = [(6,7|8)];
+	c[a a];
 	//print(88);
 	print(i);
 	return 0;

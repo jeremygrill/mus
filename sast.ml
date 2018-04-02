@@ -8,7 +8,7 @@ and sx =
     SIntLit of int
   | SBoolLit of bool
   | SNoteLit of sexpr * sexpr * sexpr
-  | SChordLit of sexpr list
+  | SChordLit of string * sexpr list
   | SSeqLit of sexpr list
   | SStringLit of string
   | SId of string
@@ -23,7 +23,6 @@ type sstmt =
   | SExpr of sexpr
   | SReturn of sexpr
   | SPlay of sexpr
-  (*| SFunc of string * sexpr*)
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
@@ -54,7 +53,7 @@ let rec string_of_sexpr (t, e) =
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
   | SNoteLit(e1,e2,e3)-> "(" ^ string_of_sexpr e1 ^ "," ^ string_of_sexpr e2 ^ " | " ^ string_of_sexpr e3 ^ ")"
-  | SChordLit(e1)-> "[" ^ String.concat "" (List.map string_of_sexpr e1) ^ "]"
+  | SChordLit(f, e1)-> "[" ^ String.concat "" (List.map string_of_sexpr e1) ^ "]"
   | SSeqLit(e1)->"Seq" (* ^ string_of_sexpr e1 *) (*fix*)
   | SStringLit(e1)->e1 
           ) ^ ")"
@@ -66,7 +65,6 @@ let rec string_of_sstmt = function
   | SExpr(expr) -> string_of_sexpr expr ^ ";\n";
   | SReturn(expr) -> "return " ^ string_of_sexpr expr ^ ";\n";
   | SPlay(expr) -> "play " ^ string_of_sexpr expr ^ ";\n";
- (* | SFunc(e1, e2) -> e1 ^ " " ^ string_of_sexpr e2 ^ ";\n"; *)
   | SIf(e, s, SBlock([])) ->
       "if (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^

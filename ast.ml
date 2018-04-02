@@ -12,7 +12,7 @@ type expr =
 	  IntLit of int
 	| BoolLit of bool
 	| NoteLit of expr * expr * expr
-	| ChordLit of expr list
+	| ChordLit of string * expr list
 	| SeqLit of expr list
 	| StringLit of string
 	| Binop of expr * op * expr
@@ -27,7 +27,6 @@ type stmt =
   | Expr of expr
   | Return of expr
   | Play of expr
-  (*| Func of string * expr*)
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
@@ -68,7 +67,7 @@ let rec string_of_expr = function
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
   | NoteLit(e1, e2, e3) -> "(" ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ " | " ^ string_of_expr e3 ^ ")"
-  | ChordLit(e1) -> "[" ^ String.concat "" (List.map string_of_expr e1) ^ "]"
+  | ChordLit(f, e1) -> "[" ^ String.concat "" (List.map string_of_expr e1) ^ "]"
   | SeqLit(e1) -> "Seq"
   | StringLit(e1) -> e1
 
@@ -79,7 +78,6 @@ let rec string_of_stmt = function
   | Expr(expr) -> string_of_expr expr ^ ";\n";
   | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
   | Play(expr) -> "play " ^ string_of_expr expr ^ ";\n";
-  (*| Func(e1, e2) -> e1 ^ " " ^ string_of_expr e2 ^ ";\n";*)
   | If(e, s, Block([])) -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
