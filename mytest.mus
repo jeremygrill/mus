@@ -4,7 +4,10 @@ Int run(){
 	Note n;
 	i = 9;
 	n = (1,3|9); 
-	print(n);
+
+	if(true){
+		i = 9;
+	}
 	return 0;
 
 

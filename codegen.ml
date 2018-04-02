@@ -108,6 +108,7 @@ let translate (globals, functions) =
     (* Generate LLVM code for a call to Mus's "print" *)
     let rec expr builder ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int i32_t i (* Generate a constant integer *)
+      | SBoolLit b -> L.const_int i1_t (if b then 1 else 0)
       | SNoteLit (n1, n2, n3) ->
     let n1' = expr builder n1  (* 8 bits of n1 (pitch) *)
     and n2' = expr builder n2  (* 8 bits of n2 (velocity) *)
@@ -160,6 +161,12 @@ let translate (globals, functions) =
       | _ -> to_imp (string_of_sexpr (A.Int,e))  
     in
     (* Deal with a block of expression statements, terminated by a return *)
+    let add_terminal builder instr =
+                           (* The current block where we're inserting instr *)
+      match L.block_terminator (L.insertion_block builder) with
+        Some _ -> ()
+      | None -> ignore (instr builder) in
+  
     let rec stmt builder = function
   SBlock sl -> List.fold_left stmt builder sl
       | SExpr e -> let _ = expr builder e in builder 
@@ -167,9 +174,36 @@ let translate (globals, functions) =
                               A.Int -> L.build_ret (expr builder e) builder 
                             | _ -> to_imp (A.string_of_typ fdecl.styp)
                      in builder
+      | SIf (predicate, then_stmt, else_stmt) ->
+         let bool_val = expr builder predicate in
+         (* Add "merge" basic block to our function's list of blocks *)
+         let merge_bb = L.append_block context "merge" the_function in
+         (* Partial function used to generate branch to merge block *) 
+         let branch_instr = L.build_br merge_bb in
+
+         (* Same for "then" basic block *)
+         let then_bb = L.append_block context "then" the_function in
+         (* Position builder in "then" block and build the statement *)
+         let then_builder = stmt (L.builder_at_end context then_bb) then_stmt in
+         (* Add a branch to the "then" block (to the merge block) 
+           if a terminator doesn't already exist for the "then" block *)
+         let () = add_terminal then_builder branch_instr in
+
+         (* Identical to stuff we did for "then" *)
+         let else_bb = L.append_block context "else" the_function in
+         let else_builder = stmt (L.builder_at_end context else_bb) else_stmt in
+         let () = add_terminal else_builder branch_instr in
+
+         (* Generate initial branch instruction perform the selection of "then"
+         or "else". Note we're using the builder we had access to at the start
+         of this alternative. *)
+         let _ = L.build_cond_br bool_val then_bb else_bb builder in
+         (* Move to the merge block for further instruction building *)
+          L.builder_at_end context merge_bb
+         (* Generate the instructions for the function's body, 
+          which mutates the_module *)
+
       | s -> to_imp (string_of_sstmt s)
-    (* Generate the instructions for the function's body, 
-       which mutates the_module *)
     in ignore(stmt builder (SBlock fdecl.sbody))
   (* Build each function (there should only be one for Hello World), 
      and return the final module *)
