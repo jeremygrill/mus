@@ -125,10 +125,10 @@ let check (globals, functions) =
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
-      | ChordLit(args) as chord -> 
+      | ChordLit(var, args) as chord -> 
           let lt = type_of_identifier var
           and args' = List.map expr args in
-          (lt, SChordLit(args'))
+          (lt, SChordLit(var, args'))
       | Call(fname, args) as call -> 
           let fd = find_func fname in
           let param_length = List.length fd.formals in
