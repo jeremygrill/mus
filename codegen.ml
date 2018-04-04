@@ -63,7 +63,11 @@ let translate (globals, functions) =
 
   (* Declare a "printf" function to implement MicroC's "print". *)
   let printf_t : L.lltype = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
-  let printf_func : L.llvalue = L.declare_function "print" printf_t the_module in 
+  let printf_func : L.llvalue = L.declare_function "printf" printf_t the_module in 
+
+  (*testing printing note--may not work*)
+  let print_note_t = L.function_type i32_t [| L.pointer_type i8_t ; L.pointer_type i8_t; L.pointer_type i8_t|] in 
+  let print_note_func = L.declare_function "print_note_func" print_note_t the_module in
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
@@ -84,6 +88,7 @@ let translate (globals, functions) =
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
+    and note_format_str = L.build_global_stringptr "(%d,%d|%d)\n" "fmt" builder
     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
@@ -141,7 +146,8 @@ let translate (globals, functions) =
     (* Populate Array with Values *)
     List.iteri fill 2 e1' in
     e1'*)
-       | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "print" builder 
+       | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
+       | SCall("print_note", [e]) -> L.build_call print_note_func [|note_format_str; (expr builder e)|] "print_note_func" builder 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1

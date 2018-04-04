@@ -61,7 +61,7 @@ let check (globals, functions) =
   in
   
   (* Return a function from our symbol table *)
-  let find_func s = 
+  let find_func s = (*check if s= run, then get function, StringMap.add "main"*)
     try StringMap.find s function_decls
     with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
@@ -190,4 +190,4 @@ let check (globals, functions) =
       | _ -> let err = "internal error: block didn't become a block?"
       in raise (Failure err)
     }
-  in (globals', List.map check_function functions)
+  in (globals', List.map check_function functions) (*look for run, change to main *)
