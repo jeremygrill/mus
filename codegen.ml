@@ -224,6 +224,28 @@ let translate (globals, functions) =
           L.builder_at_end context merge_bb
          (* Generate the instructions for the function's body, 
           which mutates the_module *)
+      | SWhile (predicate, body) ->
+          (* First create basic block for condition instructions -- this will
+          serve as destination in the case of a loop *)
+         let pred_bb = L.append_block context "while" the_function in
+          (* In current block, branch to predicate to execute the condition *)
+         let _ = L.build_br pred_bb builder in
+
+          (* Create the body's block, generate the code for it, and add a branch
+          back to the predicate block (we always jump back at the end of a while
+          loop's body, unless we returned or something) *)
+         let body_bb = L.append_block context "while_body" the_function in
+          let while_builder = stmt (L.builder_at_end context body_bb) body in
+         let () = add_terminal while_builder (L.build_br pred_bb) in
+
+          (* Generate the predicate code in the predicate block *)
+         let pred_builder = L.builder_at_end context pred_bb in
+         let bool_val = expr pred_builder predicate in
+
+          (* Hook everything up *)
+         let merge_bb = L.append_block context "merge" the_function in
+         let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
+         L.builder_at_end context merge_bb
 
       | s -> to_imp (string_of_sstmt s)
     in ignore(stmt builder (SBlock fdecl.sbody))

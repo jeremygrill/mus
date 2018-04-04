@@ -1,0 +1,28 @@
+Int run()
+{
+	Int i;
+	Int j;
+	Bool b;
+	Note a;
+	Note n;
+	Chord c;
+	Chord d;
+	4 + 2;
+	i = 1; 
+	b = false;
+	a = (1,2|3);
+	n = (6,7|8);
+	d[a a a a a];
+	c[a n];
+	print(88);
+	print(i);
+	c;
+	d;
+	
+	while(b){
+		print(33);	
+	}
+
+	return 0;
+
+}
