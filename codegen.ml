@@ -246,7 +246,9 @@ let translate (globals, functions) =
          let merge_bb = L.append_block context "merge" the_function in
          let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
          L.builder_at_end context merge_bb
-
+      (* Implement for loops as while loops! *)
+      | SFor (e1, e2, e3, body) -> stmt builder
+      ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
       | s -> to_imp (string_of_sstmt s)
     in ignore(stmt builder (SBlock fdecl.sbody))
   (* Build each function (there should only be one for Hello World), 
