@@ -62,8 +62,8 @@ let translate (globals, functions) =
   let printf_func = L.declare_function "printf" printf_t the_module in
 
   (*testing printing note--may not work*)
-  let print_note_t = L.function_type i32_t [| L.pointer_type i8_t|] in 
-  let print_note_func = L.declare_function "printf" printf_t the_module in
+  let printn_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t|] in 
+  let printn_func = L.declare_function "printn" printn_t the_module in
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
@@ -145,7 +145,7 @@ let translate (globals, functions) =
     List.iteri fill 2 e1' in
     e1'*)
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
-       | SCall("print_note", [e]) -> L.build_call printf_func [| note_format_str; (expr builder e)|] "printf" builder 
+       | SCall ("printn", [e]) -> L.build_call printn_func [| (expr builder e) |] "printn" builder
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1

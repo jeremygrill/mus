@@ -15,7 +15,7 @@ Int main()
 	//d = [a a a a a];
 	//c = [n];
 	//print(88);
-	print(i);
+	printn(a);
 	//c;
 	//d;
 	return 0;
