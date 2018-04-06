@@ -1,12 +1,25 @@
-var Midi = require('jsmidgen/lib/jsmidgen.js');
+var Midi = require('./jsmidgen/lib/jsmidgen.js');
 var fs = require('fs');
 
 var file = new Midi.File();
 var track = new Midi.Track();
 file.addTrack(track);
 
+function musConvert(musSeq){
+	
+	var note = musSeq;
+	note = note & 4278190080;
+	note /= Math.pow(2, 24);
+	track.addNote(0, note , 64);
+	track.setInstrument(0, 0x13);
+	fs.writeFileSync('themidifile.mid', file.toBytes(), 'binary');
 
+	//var musFile = fs.openSync("ethan.txt", 'r');
+	//fs.writeFileSync('functiontest.txt', musFile, 'binary');
+}
 
+//musConvert()
+/*
 track.addNote(0, 'c4', 64);
 track.addNote(0, 'd4', 64);
 track.addNote(0, 'e4', 64);
@@ -32,9 +45,9 @@ track.addNoteOff(0, 'c4', 384);
 track.addNoteOff(0, 'e4');
 track.addNoteOff(0, 'g4');
 
-fs.writeFileSync('test.mid', file.toBytes(), 'binary');
-
-file = new Midi.File();
+fs.writeFileSync('themidifile.mid', file.toBytes(), 'binary');
+*/
+/*file = new Midi.File();
 file
 	.addTrack()
 
@@ -64,4 +77,4 @@ file
 		.addNoteOff(0, 'g4')
 		;
 
-fs.writeFileSync('test2.mid', file.toBytes(), 'binary');
+fs.writeFileSync('test2.mid', file.toBytes(), 'binary');*/
