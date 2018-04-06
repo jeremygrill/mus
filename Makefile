@@ -9,7 +9,8 @@ run: all
 	./toplevel.native tests/hello.mus > tests/hello.ll
 	llc tests/hello.ll
 	cc tests/hello.s
-
+	./tests/a.out
+	
 .PHONY : all
 all : toplevel.native
 
