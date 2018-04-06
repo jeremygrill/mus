@@ -61,13 +61,9 @@ let translate (globals, functions) =
   let printf_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func = L.declare_function "printf" printf_t the_module in
 
-  (* Declare a "printf" function to implement MicroC's "print". *)
-  let printf_t : L.lltype = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
-  let printf_func : L.llvalue = L.declare_function "printf" printf_t the_module in 
-
   (*testing printing note--may not work*)
-  let print_note_t = L.function_type i32_t [| L.pointer_type i8_t ; L.pointer_type i8_t; L.pointer_type i8_t|] in 
-  let print_note_func = L.declare_function "print_note_func" print_note_t the_module in
+  let print_note_t = L.function_type i32_t [| L.pointer_type i8_t|] in 
+  let print_note_func = L.declare_function "printf" printf_t the_module in
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
@@ -136,7 +132,9 @@ let translate (globals, functions) =
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
        (*| SChordLit (e1) -> 
-    let e1' = List.map (expr builder) e1 in
+    let e1' = expr builder e1 in 
+    L.const_int i32_t 1*)
+    (*let e1' = List.map (expr builder) e1 in
     let typ  = L.pointer_type (L.type_of (List.hd e1')) in
     let size = L.const_int i32_t (List.length e1') in
     let arr  = L.build_array_malloc typ size "arr" builder in arr*)
@@ -147,7 +145,7 @@ let translate (globals, functions) =
     List.iteri fill 2 e1' in
     e1'*)
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
-       | SCall("print_note", [e]) -> L.build_call print_note_func [|note_format_str; (expr builder e)|] "print_note_func" builder 
+       | SCall("print_note", [e]) -> L.build_call printf_func [| note_format_str; (expr builder e)|] "printf" builder 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1
