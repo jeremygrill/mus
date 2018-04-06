@@ -7,15 +7,11 @@ _main:                                  ## @main
 ## %bb.0:                               ## %entry
 	subq	$40, %rsp
 	.cfi_def_cfa_offset 48
-	movl	$1, 4(%rsp)
-	movl	$16908291, 12(%rsp)     ## imm = 0x1020003
-	movl	$101122056, 8(%rsp)     ## imm = 0x6070008
-	movl	$40, %edi
-	callq	_malloc
-	movl	$16, %edi
-	callq	_malloc
-	movl	4(%rsp), %esi
+	movl	$1, 12(%rsp)
+	movl	$16908291, 8(%rsp)      ## imm = 0x1020003
+	movl	$101122056, 4(%rsp)     ## imm = 0x6070008
 	leaq	L_fmt(%rip), %rdi
+	movl	$1, %esi
 	xorl	%eax, %eax
 	callq	_printf
 	xorl	%eax, %eax

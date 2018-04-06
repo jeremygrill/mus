@@ -8,7 +8,7 @@ and sx =
     SIntLit of int
   | SBoolLit of bool
   | SNoteLit of sexpr * sexpr * sexpr
-  | SChordLit of string * sexpr list
+  | SChordLit of sexpr list
   | SSeqLit of sexpr list
   | SStringLit of string
   | SId of string
@@ -53,7 +53,7 @@ let rec string_of_sexpr (t, e) =
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
   | SNoteLit(e1,e2,e3)-> "(" ^ string_of_sexpr e1 ^ "," ^ string_of_sexpr e2 ^ " | " ^ string_of_sexpr e3 ^ ")"
-  | SChordLit(f, e1)-> "[" ^ String.concat "" (List.map string_of_sexpr e1) ^ "]"
+  | SChordLit(e1)-> "[" ^ String.concat "" (List.map string_of_sexpr e1) ^ "]"
   | SSeqLit(e1)->"Seq" (* ^ string_of_sexpr e1 *) (*fix*)
   | SStringLit(e1)->e1 
           ) ^ ")"

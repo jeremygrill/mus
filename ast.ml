@@ -12,7 +12,7 @@ type expr =
 	  IntLit of int
 	| BoolLit of bool
 	| NoteLit of expr * expr * expr
-	| ChordLit of string * expr list
+	| ChordLit of expr list
 	| SeqLit of expr list
 	| StringLit of string
 	| Binop of expr * op * expr
@@ -67,7 +67,7 @@ let rec string_of_expr = function
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
   | NoteLit(e1, e2, e3) -> "(" ^ string_of_expr e1 ^ ", " ^ string_of_expr e2 ^ " | " ^ string_of_expr e3 ^ ")"
-  | ChordLit(f, e1) -> "[" ^ String.concat "" (List.map string_of_expr e1) ^ "]"
+  | ChordLit(e1) -> "[" ^ String.concat "" (List.map string_of_expr e1) ^ "]"
   | SeqLit(e1) -> "Seq"
   | StringLit(e1) -> e1
 

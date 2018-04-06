@@ -5,11 +5,14 @@
 # Easiest way to build: using ocamlbuild, which in turn uses ocamlfind
 
 .PHONY : run
-run: all
-	./toplevel.native tests/hello.mus > tests/hello.ll
+run: compile
 	llc tests/hello.ll
 	cc tests/hello.s
 	./tests/a.out
+
+.PHONY : compile
+compile : all
+	./toplevel.native tests/hello.mus > tests/hello.ll
 	
 .PHONY : all
 all : toplevel.native

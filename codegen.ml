@@ -135,11 +135,11 @@ let translate (globals, functions) =
     and i2' = (L.build_mul n2' n2shift' "tmp" builder) in
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
-       | SChordLit (f, e1) -> 
+       (*| SChordLit (e1) -> 
     let e1' = List.map (expr builder) e1 in
     let typ  = L.pointer_type (L.type_of (List.hd e1')) in
     let size = L.const_int i32_t (List.length e1') in
-    let arr  = L.build_array_malloc typ size "arr" builder in arr
+    let arr  = L.build_array_malloc typ size "arr" builder in arr*)
     (*let arr_e = List.iteri (L.build_gep arr [| L.const_int i32_t i |] "arr_e" builder) in *)
     (*let fill i e =
       L.build_gep arr [| L.const_int i32_t i |] "arr_e" builder in
