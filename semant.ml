@@ -66,7 +66,7 @@ let check (globals, functions) =
     with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
 
-  let _ = find_func "run" in (* Ensure "run" is defined *)
+  let _ = find_func "main" in (* Ensure "main" is defined *)
 
   let check_function func =
     (* Make sure no formals or locals are void or duplicates *)
@@ -190,4 +190,4 @@ let check (globals, functions) =
       | _ -> let err = "internal error: block didn't become a block?"
       in raise (Failure err)
     }
-  in (globals', List.map check_function functions) (*look for run, change to main *)
+  in (globals', List.map check_function functions) 

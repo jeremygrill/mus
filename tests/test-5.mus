@@ -1,4 +1,4 @@
-Int run(){
+Int main(){
 	Note a;
 	Note b;
 	Chord c;

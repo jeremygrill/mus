@@ -1,4 +1,4 @@
-Int run()
+Int main()
 {
 	Int i;
 	Int j;

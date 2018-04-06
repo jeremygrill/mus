@@ -1,4 +1,4 @@
-Int run()
+Int main()
 {
   Int i;
   for ( ; true ; ) //removing {}, not a problem,
