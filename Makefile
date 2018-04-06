@@ -8,7 +8,7 @@
 run: compile
 	llc tests/hello.ll
 	cc tests/hello.s
-	tests/a.out
+	./a.out
 
 .PHONY : compile
 compile : all
@@ -31,7 +31,7 @@ clean :
 	rm -rf testall.log *.diff toplevel scanner.ml parser.ml parser.mli
 	rm -rf hello
 	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll *.out *.exe
-	rm -rf tests/*.ll tests/*.s tests/.out
+	rm -rf tests/*.ll tests/*.s
 
 # More detailed: build using ocamlc/ocamlopt + ocamlfind to locate LLVM
 
