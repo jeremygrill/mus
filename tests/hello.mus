@@ -17,6 +17,7 @@ Int main()
 	//print(88);
 	//print(8);
 	printn(n);
+	printn(a);
 	//c;
 	//d;
 	return 0;

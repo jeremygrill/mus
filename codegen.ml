@@ -67,7 +67,6 @@ let translate (globals, functions) =
   let printn_func = L.declare_function "printf" printn_t the_module in
 
 
-
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
   (* Define each function (arguments and return type) so we can 
@@ -152,12 +151,11 @@ let translate (globals, functions) =
     let e' = expr builder e in 
     let n1 = L.build_and e' (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
     let n1' = L.build_sdiv n1 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
-    L.build_call printn_func [| int_format_str; n1' |] "printn" builder;
     let n2 = L.build_and e' (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
     let n2' = L.build_sdiv n2 (expr builder (Int, SIntLit 65536)) "tmp" builder in
-    L.build_call printn_func [| int_format_str; n2' |] "printn" builder;
     let n3' = L.build_and e' (expr builder (Int, SIntLit 65535)) "tmp" builder in 
-    L.build_call printn_func [| int_format_str; n3' |] "printn" builder;
+    L.build_call printn_func[| note_format_str; n1'; n2'; n3' |] "printn" builder;
+    (*print_string(Sast.string_of_sprogram );*)
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1
