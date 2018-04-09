@@ -1,0 +1,14 @@
+Int main(){
+	
+	Int i;
+	i = 0;
+
+	if(true){
+		i = 4;
+	}
+	
+	print(i);
+	
+	
+	return 0;
+}
