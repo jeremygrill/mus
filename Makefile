@@ -13,10 +13,10 @@ fail: all
 
 .PHONY : tests
 tests: all
-	./toplevel.native tests/test-print.mus > tests/test-print.ll
-	llc tests/test-print.ll
-	cc tests/test-print.s
-	./a.out > tests/test-print.out
+	./toplevel.native tests/test-binop.mus > tests/test-binop.ll
+	llc tests/test-binop.ll
+	cc tests/test-binop.s
+	./a.out > tests/test-binop.out
 
 .PHONY : hello
 hello: all
@@ -41,7 +41,7 @@ clean :
 	ocamlbuild -clean
 	rm -rf testall.log *.diff toplevel scanner.ml parser.ml parser.mli
 	rm -rf hello
-	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll a.out *.exe
+	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll *.out *.exe
 	rm -rf tests/*.ll tests/*.s
 
 # More detailed: build using ocamlc/ocamlopt + ocamlfind to locate LLVM
