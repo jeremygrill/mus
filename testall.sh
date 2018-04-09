@@ -8,13 +8,13 @@
 #  Compile and check the error of each expected-to-fail test
 
 # Path to the LLVM interpreter
-#LLI="lli"
+LLI="lli"
 
 # Path to the LLVM compiler
-#LLC="llc"
+LLC="llc"
 
 # Path to the C compiler
-#CC="cc"
+CC="cc"
 
 # Path to the microc compiler.  Usually "./microc.native"
 # Try "_build/microc.native" if ocamlbuild was unable to create a symbolic link.
@@ -50,10 +50,10 @@ SignalError() {
 # Compares the outfile with reffile.  Differences, if any, written to difffile
 Compare() {
     generatedfiles="$generatedfiles $3"
-    echo diff  $1 $2 ">" $3 1>&2
-    diff "$1" "$2" > "$3" 2>&1 && {
-	SignalError "$1 differs"
-	echo "FAILED $1 differs from $2" 1>&2
+    echo diff -b $1 $2 ">" $3 1>&2
+    diff -b "$1" "$2" > "$3" 2>&1 || {
+    SignalError "$1 differs"
+    echo "FAILED $1 differs from $2" 1>&2
     }
 }
 
@@ -92,11 +92,11 @@ Check() {
 
     generatedfiles=""
 
-    generatedfiles="$generatedfiles ${basename}.out" &&
-    Run "$MUS" "$1" ">" "${basename}.out" &&
-#    Run "$LLC" "${basename}.ll" ">" "${basename}.s" &&
-#    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
-#    Run "./${basename}.exe" > "${basename}.out" &&
+    generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.out" &&
+    Run "$MUS" "$1" ">" "${basename}.ll" &&
+    Run "$LLC" "${basename}.ll" ">" "${basename}.s" &&
+    Run "$CC" "${basename}.s" &&
+    Run "./a.out" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
