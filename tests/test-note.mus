@@ -1,0 +1,13 @@
+Int main()
+{
+	Note a;
+	Note n;
+
+	a = (101,2|3);
+	n = (106,7|8);
+
+	printn(n);
+	printn(a);
+	
+	return 0;
+}
