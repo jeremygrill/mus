@@ -133,11 +133,9 @@ let translate (globals, functions) =
     and i2' = (L.build_mul n2' n2shift' "tmp" builder) in
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
-       (*| SChordLit (e) -> *)
-    (*let (e1, _) = e in 
-    L.const_int i32_t 1*)
-    (*let e1' = expr builder e1 in 
-    L.const_int i32_t 1*)
+       | SChordLit (e) -> 
+    let e1' = List.length e in 
+    L.const_int i32_t e1'
     (*let e1' = List.map (expr builder) e1 in
     let typ  = L.pointer_type (L.type_of (List.hd e1')) in
     let size = L.const_int i32_t (List.length e1') in
