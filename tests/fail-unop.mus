@@ -1,0 +1,10 @@
+Int main()
+{
+	Note a;
+	Note n;
+
+	a = (101,2|3);
+	n = !a;
+	
+	return 0;
+}

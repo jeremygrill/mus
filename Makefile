@@ -4,15 +4,26 @@
 
 # Easiest way to build: using ocamlbuild, which in turn uses ocamlfind
 
-.PHONY : run
-run: compile
+.PHONY : fail
+fail: all
+	./toplevel.native tests/fail-unop.mus 2>> tests/fail-unop.err
+	llc tests/fail-unop.ll 2>> tests/fail-unop.err
+	cc tests/fail-unop.s 2>> tests/fail-unop.err
+	./a.out 2>> tests/fail-unop.err
+
+.PHONY : tests
+tests: all
+	./toplevel.native tests/test-while.mus > tests/test-while.ll
+	llc tests/test-while.ll
+	cc tests/test-while.s
+	./a.out > tests/test-while.out
+
+.PHONY : hello
+hello: all
+	./toplevel.native tests/hello.mus > tests/hello.ll
 	llc tests/hello.ll
 	cc tests/hello.s
-	./a.out
-
-.PHONY : compile
-compile : all
-	./toplevel.native tests/hello.mus > tests/hello.ll
+	./a.out > tests/hello.out
 	
 .PHONY : all
 all : toplevel.native
@@ -30,7 +41,7 @@ clean :
 	ocamlbuild -clean
 	rm -rf testall.log *.diff toplevel scanner.ml parser.ml parser.mli
 	rm -rf hello
-	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll *.out *.exe
+	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll a.out *.exe
 	rm -rf tests/*.ll tests/*.s
 
 # More detailed: build using ocamlc/ocamlopt + ocamlfind to locate LLVM
