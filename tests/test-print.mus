@@ -1,0 +1,10 @@
+Int main()
+{
+	Int i;
+	i = 44;
+
+	print(33);
+	print(i);
+	
+	return 0;
+}

@@ -6,17 +6,17 @@
 
 .PHONY : fail
 fail: all
-	./toplevel.native tests/fail-unop.mus 2>> tests/fail-unop.err
-	llc tests/fail-unop.ll 2>> tests/fail-unop.err
-	cc tests/fail-unop.s 2>> tests/fail-unop.err
-	./a.out 2>> tests/fail-unop.err
+	./toplevel.native tests/fail-print.mus 2>> tests/fail-print.err
+	llc tests/fail-print.ll 2>> tests/fail-print.err
+	cc tests/fail-print.s 2>> tests/fail-print.err
+	./a.out 2>> tests/fail-print.err
 
 .PHONY : tests
 tests: all
-	./toplevel.native tests/test-while.mus > tests/test-while.ll
-	llc tests/test-while.ll
-	cc tests/test-while.s
-	./a.out > tests/test-while.out
+	./toplevel.native tests/test-print.mus > tests/test-print.ll
+	llc tests/test-print.ll
+	cc tests/test-print.s
+	./a.out > tests/test-print.out
 
 .PHONY : hello
 hello: all

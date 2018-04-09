@@ -1,16 +1,13 @@
 Int main()
 {
-	Int i;
 	Note a;
 	Note n;
 
 	a = (101,2|3);
 	n = (106,7|8);
 
-	i = n + 3; //cannot add note and int
-
-	printn(n);
-	printn(a);
+	print(n); //need to print notes with printn
+	print(a);
 	
 	return 0;
 }
