@@ -5,7 +5,20 @@ var file = new Midi.File();
 var track = new Midi.Track();
 file.addTrack(track);
 
-function musConvert(musSeq){
+
+/*
+var Converter = function(config){
+	if (!this) return new Converter(config);
+	var c = config || {};
+		this.events = c.events || [];
+};
+
+function Converter(data)
+{
+	this.id = data;
+}
+
+Converter.musConvert = function(musSeq){
 	
 	var note = musSeq;
 	note = note & 4278190080;
@@ -13,12 +26,33 @@ function musConvert(musSeq){
 	track.addNote(0, note , 64);
 	track.setInstrument(0, 0x13);
 	fs.writeFileSync('themidifile.mid', file.toBytes(), 'binary');
+	return this;
+	//var musFile = fs.openSync("ethan.txt", 'r');
+	//fs.writeFileSync('functiontest.txt', musFile, 'binary');
+}*/
+
+function play(musSeq){
+	var note = musSeq;
+	note = note & 4278190080;
+	note /= Math.pow(2, 24);
+	//console.log(note);
+	//var x = note;
+	//console.log(x);
+	track.addNote(0, note, 64);
+	track.setInstrument(0, 0x13);
+	fs.writeFileSync('themidifile.mid', file.toBytes(), 'binary');
 
 	//var musFile = fs.openSync("ethan.txt", 'r');
 	//fs.writeFileSync('functiontest.txt', musFile, 'binary');
 }
 
-//musConvert()
+//play(60);
+
+//play(1694629891);
+
+
+
+
 /*
 track.addNote(0, 'c4', 64);
 track.addNote(0, 'd4', 64);
@@ -46,8 +80,8 @@ track.addNoteOff(0, 'e4');
 track.addNoteOff(0, 'g4');
 
 fs.writeFileSync('themidifile.mid', file.toBytes(), 'binary');
-*/
-/*file = new Midi.File();
+
+file = new Midi.File();
 file
 	.addTrack()
 
