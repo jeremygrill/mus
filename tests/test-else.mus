@@ -1,0 +1,20 @@
+Int main(){
+	
+	Int i;
+	Int j;
+	Note n;
+	
+	i = 4;
+	j = 5;	
+
+	if(i < j){
+		n = (1,2|3);
+	}else{
+		n = (4,5|6); 
+	}
+
+	printn(n);
+
+	return 0;
+
+}
