@@ -4,7 +4,7 @@ Int main()
 	Note n;
 
 	a = (101,2|3);
-	n = !a;
+	n = !a; //cannot use negation on a note
 	
 	return 0;
 }
