@@ -6,10 +6,10 @@
 
 .PHONY : fail
 fail: all
-	./toplevel.native tests/fail-note.mus > tests/fail-note.ll
-	llc tests/fail-note.ll
-	cc tests/fail-note.s
-	./a.out 1>&2 tests/fail-note.err
+	./toplevel.native tests/fail-note.mus 2>> tests/fail-note.err
+	llc tests/fail-note.ll 2>> tests/fail-note.err
+	cc tests/fail-note.s 2>> tests/fail-note.err
+	./a.out 2>> tests/fail-note.err
 
 .PHONY : tests
 tests: all
