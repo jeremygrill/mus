@@ -1,0 +1,8 @@
+Int main()
+{
+	Note a;
+	a = (101,2|3);
+	play(a);
+	
+	return 0;
+}
