@@ -31,21 +31,14 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context 
   and i1_t       = L.i1_type     context in 
-  let arr_note_t = L.named_struct_type context "arr_note_t" in
-                let body =
-                  [|
-                    i32_t; (* arr length *)
-                    i32_t; (* arr type *)
-                    L.pointer_type i32_t;
-       |] in
-                  ignore (L.struct_set_body arr_note_t body false);
+  let note_node  = L.struct_type context [| i32_t; L.pointer_type i32_t; |] in
 
   (* Convert MicroC types to LLVM types *)
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Note  -> i32_t
     | A.Bool  -> i1_t
-    | A.Chord -> L.pointer_type arr_note_t
+    | A.Chord -> L.pointer_type note_node
     | _       -> raise(Failure("sorry"))
 
     (*| t -> raise (Failure ("Type " ^ A.string_of_typ t ^ " not implemented yet"))*)
@@ -134,8 +127,10 @@ let translate (globals, functions) =
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
        | SChordLit (e) -> 
-    let e1' = List.length e in 
-    L.const_int i32_t e1'
+    let next = List.hd e in
+    let e1' = expr builder next in
+    (*L.const_struct note_node [| 1; L.pointer 1 |]*)
+    L.const_int i32_t 1
     (*let e1' = List.map (expr builder) e1 in
     let typ  = L.pointer_type (L.type_of (List.hd e1')) in
     let size = L.const_int i32_t (List.length e1') in
