@@ -1,8 +1,10 @@
 Int main()
 {
 	Note a;
+	Chord c;
 	a = (101,2|3);
-	play(a);
+	c = [a];
+	printc(c);
 	
 	return 0;
 }

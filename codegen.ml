@@ -62,9 +62,13 @@ let translate (globals, functions) =
   let printf_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func = L.declare_function "printf" printf_t the_module in
 
-  (*testing printing note*)
+  (* printing note*)
   let printn_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
   let printn_func = L.declare_function "printf" printn_t the_module in
+
+  (* printing chord*)
+  let printc_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
+  let printc_func = L.declare_function "printf" printc_t the_module in
 
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
@@ -154,7 +158,7 @@ let translate (globals, functions) =
     L.dump_value i3;
     (*let i4 = L.build_in_bounds_gep chordp_node i3 "tmp" builder in
     L.dump_value i4;*)
-    i1
+    i3
 
 
     (*let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
@@ -184,6 +188,9 @@ let translate (globals, functions) =
     let n2' = L.build_sdiv n2 (expr builder (Int, SIntLit 65536)) "tmp" builder in
     let n3' = L.build_and e' (expr builder (Int, SIntLit 65535)) "tmp" builder in 
     L.build_call printn_func[| note_format_str; n1'; n2'; n3' |] "printn" builder;
+       | SCall ("printc", [e]) -> 
+    let e' = L.build_or (expr builder (Int, SIntLit 0)) (expr builder (Int, SIntLit 0)) "tmp" builder in 
+    L.build_call printc_func [| int_format_str ; e' |] "printf" builder 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1

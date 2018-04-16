@@ -43,7 +43,8 @@ let check (globals, functions) =
       locals = []; body = [] } map
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
                                ("printb", Bool);
-                               ("printn", Note) ]
+                               ("printn", Note);
+                               ("printc", Chord) ]
   in
 
   (* Add function name to symbol table *)
