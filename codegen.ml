@@ -148,7 +148,7 @@ let translate (globals, functions) =
     L.dump_value obj;
     let i1 = L.build_malloc chord_node "tmp" builder in
     L.dump_value i1;
-    let istore = L.build_store obj i1 builder in
+    let istore = L.build_store i1 obj builder in
     L.dump_value istore;
     let i3 = L.build_load obj "build_load" builder in
     L.dump_value i3;
