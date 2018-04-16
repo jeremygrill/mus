@@ -18,4 +18,12 @@ struct Chord * getChord(){
 	return c1;
 }
 
+int main(){
+
+	struct Chord * tmp = getChord();
+	printf("%d\n", tmp->note);
+	free(tmp);
+
+	return 0;
+}
 
