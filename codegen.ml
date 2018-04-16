@@ -31,14 +31,21 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context 
   and i1_t       = L.i1_type     context in 
-  let note_node  = L.struct_type context [| i32_t; L.pointer_type i32_t; |] in
+  let i8p_t      = L.pointer_type i8_t in
+  let i32p_t     = L.pointer_type i32_t in 
+  let i32pp_t    = L.pointer_type i32p_t in 
+
+  let chord_node  = L.named_struct_type context "chord_node" in
+  L.struct_set_body chord_node [| i32_t; i32p_t; |] true; 
+  let chordp_node = L.pointer_type chord_node in
+
 
   (* Convert MicroC types to LLVM types *)
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Note  -> i32_t
     | A.Bool  -> i1_t
-    | A.Chord -> L.pointer_type note_node
+    | A.Chord -> chordp_node
     | _       -> raise(Failure("sorry"))
 
     (*| t -> raise (Failure ("Type " ^ A.string_of_typ t ^ " not implemented yet"))*)
@@ -134,12 +141,28 @@ let translate (globals, functions) =
     let next = List.hd e in
     let e1' = expr builder next in
     (*L.dump_value e1';*)
-    (*L.const_struct note_node [| 1; L.pointer 1 |]*)
+    (*L.const_struct chord_node [| 1; L.pointer 1 |]*)
 *)
 
-    let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
-    a
-    (*L.builder a "tmp" builder *)
+    let obj = L.build_alloca chordp_node "chordp_node" builder in 
+    L.dump_value obj;
+    let i1 = L.build_malloc chord_node "tmp" builder in
+    L.dump_value i1;
+    let istore = L.build_store obj i1 builder in
+    L.dump_value istore;
+    let i3 = L.build_load obj "build_load" builder in
+    L.dump_value i3;
+    (*let i4 = L.build_in_bounds_gep chordp_node i3 "tmp" builder in
+    L.dump_value i4;*)
+    i1
+
+
+    (*let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
+    let a_ptr = L.build_gep (L.const_int i32_t 0) [| (L.const_int i32_t 4) |] "chord_node" builder in
+    a_ptr*)
+
+    (*let act_list = L.build_load list_pointer "cur_list" builder in
+      let pointer_to_element = L.build_gep act_list [| index |] "pointer_to_element" builder in*)
 
     (*L.const_int i32_t 1*) (* this is the safe line *)
     (*let e1' = List.map (expr builder) e1 in
