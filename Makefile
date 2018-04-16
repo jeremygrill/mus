@@ -6,7 +6,7 @@
 
 .PHONY : llvm
 llvm: all
-	"export PATH=$PATH:/usr/local/opt/llvm/bin"
+	export PATH=/usr/local/opt/llvm/bin:$(PATH)
 
 .PHONY : fail
 fail: all

@@ -127,10 +127,21 @@ let translate (globals, functions) =
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
        | SChordLit (e) -> 
+(*
+    let helper ptr elem = 
+    (*helper_func*) in
+    List.fold_right helper e *null_ptr*
     let next = List.hd e in
     let e1' = expr builder next in
+    (*L.dump_value e1';*)
     (*L.const_struct note_node [| 1; L.pointer 1 |]*)
-    L.const_int i32_t 1
+*)
+
+    let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
+    a
+    (*L.builder a "tmp" builder *)
+
+    (*L.const_int i32_t 1*) (* this is the safe line *)
     (*let e1' = List.map (expr builder) e1 in
     let typ  = L.pointer_type (L.type_of (List.hd e1')) in
     let size = L.const_int i32_t (List.length e1') in
