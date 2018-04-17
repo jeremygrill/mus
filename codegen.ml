@@ -138,6 +138,7 @@ let translate (globals, functions) =
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
        | SChordLit (e) -> 
+
 (*
     let helper ptr elem = 
     (*helper_func*) in
@@ -147,7 +148,7 @@ let translate (globals, functions) =
     (*L.dump_value e1';*)
     (*L.const_struct chord_node [| 1; L.pointer 1 |]*)
 *)
-
+  
     let obj = L.build_alloca chordp_node "chordp_node" builder in 
     L.dump_value obj;
     let i1 = L.build_malloc chord_node "tmp" builder in
@@ -156,9 +157,23 @@ let translate (globals, functions) =
     L.dump_value istore;
     let i3 = L.build_load obj "build_load" builder in
     L.dump_value i3;
+    let empty = L.const_int i32_t 0 in
+
+    (*values below may need to be changed!*)
+    let i4 = L.build_in_bounds_gep i3 [|empty|] "i4"  builder in
     (*let i4 = L.build_in_bounds_gep chordp_node i3 "tmp" builder in
     L.dump_value i4;*)
-    i3
+    (*L.dump_value i4;*)
+(*  let two = L.const_int i32_t 2 in
+    let store_int = L.build_malloc i32_t "tmp" builder in
+    let istore2 = L.build_store store_int two builder in
+    L.dump_value istore2;*)
+    (*NEED TO ADD STORE INSTRUCTION--not sure how*)
+    let i5 = L.build_load obj "i5" builder in
+    L.dump_value i5;
+
+
+    i3 
 
 
     (*let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
