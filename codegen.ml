@@ -149,29 +149,36 @@ let translate (globals, functions) =
     (*L.const_struct chord_node [| 1; L.pointer 1 |]*)
 *)
   
-    let obj = L.build_alloca chordp_node "chordp_node" builder in 
+    let obj = L.build_alloca chordp_node "%1" builder in 
     L.dump_value obj;
-    let i1 = L.build_malloc chord_node "tmp" builder in
+    let i1 = L.build_malloc chord_node "%2" builder in
     L.dump_value i1;
     let istore = L.build_store i1 obj builder in
-    L.dump_value istore;
-    let i3 = L.build_load obj "build_load" builder in
-    L.dump_value i3;
+    L.dump_value istore; 
+    let i3 = L.build_load obj "%3" builder in
+    L.dump_value i3; 
     let empty = L.const_int i32_t 0 in
 
     (*values below may need to be changed!*)
-    let i4 = L.build_in_bounds_gep i3 [|empty|] "i4"  builder in
-    (*let i4 = L.build_in_bounds_gep chordp_node i3 "tmp" builder in
-    L.dump_value i4;*)
-    (*L.dump_value i4;*)
-(*  let two = L.const_int i32_t 2 in
-    let store_int = L.build_malloc i32_t "tmp" builder in
+    let i4 = L.build_in_bounds_gep i3 [|empty|] "%4"  builder in
+    L.dump_value i4; (*has both chord_node and chord_node* but c file llvm only has chord**)
+  let two = L.const_int i32_t 2 in
+(*    let store_int = L.build_malloc i32_t "tmp" builder in
     let istore2 = L.build_store store_int two builder in
     L.dump_value istore2;*)
-    (*NEED TO ADD STORE INSTRUCTION--not sure how*)
-    let i5 = L.build_load obj "i5" builder in
+    (*NEED TO ADD STORE INSTRUCTION for the note value--not sure how*)
+(*    let istore2 = L.build_store two i4 builder in
+    L.dump_value istore2; *)
+    let i5 = L.build_load obj "%5" builder in
     L.dump_value i5;
-
+    let i6 = L.build_in_bounds_gep i5 [|empty|] "%6" builder in 
+    L.dump_value i6;
+    let nullvalue = L.const_null i32p_t in 
+    (*NEED TO STORE NULL POINTER--having trouble *)
+(*    let istore3 = L.build_store nullvalue obj builder in
+    L.dump_value istore; *)
+    let i7 = L.build_load obj "%7" builder in 
+    L.dump_value i7;
 
     i3 
 
