@@ -13,7 +13,7 @@ Int main()
 	a = (101,2|3);
 	n = (106,7|8);
 	//d = [a a a a a];
-	c = [n];
+	c = [n n];
 	//print(88);
 	printn(n);
 	printn(a);

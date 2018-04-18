@@ -138,19 +138,11 @@ let translate (globals, functions) =
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
        L.build_or n3' n12' "tmp" builder 
        | SChordLit (e) -> 
-
-(*
-    let helper ptr elem = 
-    (*helper_func*) in
-    List.fold_right helper e *null_ptr*
-    let next = List.hd e in
-    let e1' = expr builder next in
-    (*L.dump_value e1';*)
-    (*L.const_struct chord_node [| 1; L.pointer 1 |]*)
-*)
-  
+    
     let obj = L.build_alloca chordp_node "c1" builder in 
     L.dump_value obj;
+
+    let helper elem ptr = 
     let i1 = L.build_malloc chord_node "a2" builder in
     L.dump_value i1;
     let istore = L.build_store i1 obj builder in
@@ -163,7 +155,7 @@ let translate (globals, functions) =
     let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
     L.dump_value i4; 
 
-    let istore2 = L.build_store (expr builder (List.hd e)) i4 builder in
+    let istore2 = L.build_store (expr builder elem) i4 builder in
     L.dump_value istore2;
 
     let i5 = L.build_load obj "a5" builder in
@@ -172,12 +164,22 @@ let translate (globals, functions) =
     let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
     L.dump_value i6;
 
-    let istore3 = L.build_store (L.const_null i32p_t) i6 builder in
+    let istore3 = L.build_store ptr i6 builder in
     L.dump_value istore3; 
     let i7 = L.build_load obj "a7" builder in 
     L.dump_value i7;
+    i4
+    in (*end "helper"*)
 
-    i7
+    let i8 = List.fold_right helper e (L.const_null i32p_t) in
+    L.dump_value i8;
+    let final = L.build_load obj "final" builder in 
+    L.dump_value final;
+    final
+    (*let next = List.hd e in
+    let e1' = expr builder next in*)
+
+
 
 
     (*let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
