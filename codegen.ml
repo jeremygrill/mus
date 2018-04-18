@@ -149,38 +149,36 @@ let translate (globals, functions) =
     (*L.const_struct chord_node [| 1; L.pointer 1 |]*)
 *)
   
-    let obj = L.build_alloca chordp_node "%1" builder in 
+    let obj = L.build_alloca chordp_node "c1" builder in 
     L.dump_value obj;
-    let i1 = L.build_malloc chord_node "%2" builder in
+    let i1 = L.build_malloc chord_node "a2" builder in
     L.dump_value i1;
     let istore = L.build_store i1 obj builder in
     L.dump_value istore; 
-    let i3 = L.build_load obj "%3" builder in
+    let i3 = L.build_load obj "a3" builder in
     L.dump_value i3; 
+
     let empty = L.const_int i32_t 0 in
 
     (*values below may need to be changed!*)
-    let i4 = L.build_in_bounds_gep i3 [|empty|] "%4"  builder in
+    let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
     L.dump_value i4; (*has both chord_node and chord_node* but c file llvm only has chord**)
-  let two = L.const_int i32_t 2 in
-(*    let store_int = L.build_malloc i32_t "tmp" builder in
-    let istore2 = L.build_store store_int two builder in
-    L.dump_value istore2;*)
-    (*NEED TO ADD STORE INSTRUCTION for the note value--not sure how*)
-(*    let istore2 = L.build_store two i4 builder in
-    L.dump_value istore2; *)
-    let i5 = L.build_load obj "%5" builder in
+
+    let istore2 = L.build_store (L.const_int i32_t 2) i4 builder in
+    L.dump_value istore2;
+
+    let i5 = L.build_load obj "a5" builder in
     L.dump_value i5;
-    let i6 = L.build_in_bounds_gep i5 [|empty|] "%6" builder in 
+    let one = L.const_int i32_t 1 in 
+    let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
     L.dump_value i6;
-    let nullvalue = L.const_null i32p_t in 
-    (*NEED TO STORE NULL POINTER--having trouble *)
-(*    let istore3 = L.build_store nullvalue obj builder in
-    L.dump_value istore; *)
-    let i7 = L.build_load obj "%7" builder in 
+
+    let istore3 = L.build_store (L.const_null i32p_t) i6 builder in
+    L.dump_value istore3; 
+    let i7 = L.build_load obj "a7" builder in 
     L.dump_value i7;
 
-    i3 
+    i7
 
 
     (*let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
