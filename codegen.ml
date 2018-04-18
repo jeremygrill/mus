@@ -160,9 +160,8 @@ let translate (globals, functions) =
 
     let empty = L.const_int i32_t 0 in
 
-    (*values below may need to be changed!*)
     let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-    L.dump_value i4; (*has both chord_node and chord_node* but c file llvm only has chord**)
+    L.dump_value i4; 
 
     let istore2 = L.build_store (L.const_int i32_t 2) i4 builder in
     L.dump_value istore2;
@@ -209,8 +208,27 @@ let translate (globals, functions) =
     let n3' = L.build_and e' (expr builder (Int, SIntLit 65535)) "tmp" builder in 
     L.build_call printn_func[| note_format_str; n1'; n2'; n3' |] "printn" builder;
        | SCall ("printc", [e]) -> 
-    let e' = L.build_or (expr builder (Int, SIntLit 0)) (expr builder (Int, SIntLit 0)) "tmp" builder in 
-    L.build_call printc_func [| int_format_str ; e' |] "printf" builder 
+    let i1 = L.build_alloca i32_t "b1" builder in 
+    L.dump_value i1;    
+    let i2 = L.build_alloca chordp_node "tmp" builder in 
+    L.dump_value i2;
+    let istore2 = L.build_store (L.const_int i32_t 0) i1 builder in
+    L.dump_value istore2;
+    (*let print_me = L.const_int i32_t 33 in *)  
+    let istore = L.build_store (expr builder e) i2 builder in
+    L.dump_value istore; 
+    let i3 = L.build_load i2 "b3" builder in 
+    L.dump_value i3;  
+    let empty = L.const_int i32_t 0 in
+    let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "b4"  builder in
+    L.dump_value i4;
+    let i5 = L.build_load i4 "b5" builder in
+    L.dump_value i5;
+    let i6 = L.build_call printc_func [| int_format_str ; i5 |] "printf" builder in
+    L.dump_value i6;
+    let i7 = L.build_load i2 "b7" builder in 
+    L.dump_value i7;  
+    i6
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1
