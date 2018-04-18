@@ -91,7 +91,7 @@ let translate (globals, functions) =
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
     and note_format_str = L.build_global_stringptr "(%d,%d|%d)\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
+    and chord_format_str = L.build_global_stringptr "[(%d,%d|%d)]\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -163,7 +163,7 @@ let translate (globals, functions) =
     let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
     L.dump_value i4; 
 
-    let istore2 = L.build_store (L.const_int i32_t 2) i4 builder in
+    let istore2 = L.build_store (expr builder (List.hd e)) i4 builder in
     L.dump_value istore2;
 
     let i5 = L.build_load obj "a5" builder in
@@ -214,7 +214,6 @@ let translate (globals, functions) =
     L.dump_value i2;
     let istore2 = L.build_store (L.const_int i32_t 0) i1 builder in
     L.dump_value istore2;
-    (*let print_me = L.const_int i32_t 33 in *)  
     let istore = L.build_store (expr builder e) i2 builder in
     L.dump_value istore; 
     let i3 = L.build_load i2 "b3" builder in 
@@ -224,7 +223,15 @@ let translate (globals, functions) =
     L.dump_value i4;
     let i5 = L.build_load i4 "b5" builder in
     L.dump_value i5;
-    let i6 = L.build_call printc_func [| int_format_str ; i5 |] "printf" builder in
+
+    (*PARSE IT AS A NOTE!!!*)
+    let n1 = L.build_and i5 (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
+    let n1' = L.build_sdiv n1 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
+    let n2 = L.build_and i5 (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
+    let n2' = L.build_sdiv n2 (expr builder (Int, SIntLit 65536)) "tmp" builder in
+    let n3' = L.build_and i5 (expr builder (Int, SIntLit 65535)) "tmp" builder in 
+
+    let i6 = L.build_call printn_func [| chord_format_str ; n1'; n2'; n3' |] "printf" builder in
     L.dump_value i6;
     let i7 = L.build_load i2 "b7" builder in 
     L.dump_value i7;  

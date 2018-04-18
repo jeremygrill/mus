@@ -17,10 +17,10 @@ fail: all
 
 .PHONY : tests
 tests: all
-	./toplevel.native tests/test-binop.mus > tests/test-binop.ll
-	llc tests/test-binop.ll
-	cc tests/test-binop.s
-	./a.out > tests/test-binop.out
+	./toplevel.native tests/test-chord.mus > tests/test-chord.ll
+	llc tests/test-chord.ll
+	cc tests/test-chord.s
+	./a.out > tests/test-chord.out
 
 .PHONY : hello
 hello: all
