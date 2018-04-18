@@ -171,7 +171,7 @@ let translate (globals, functions) =
     i4
     in (*end "helper"*)
 
-    let i8 = List.fold_right helper e (L.const_null i32p_t) in
+    let i8 = List.fold_right helper e (L.const_null i32p_t) in (*NEED TO FIGURE OUT HOW TO FEED IN A NULL CHORD POINTER*)
     L.dump_value i8;
     let final = L.build_load obj "final" builder in 
     L.dump_value final;
