@@ -18,7 +18,7 @@ Int main()
 	printn(n);
 	printn(a);
 	printc(c);
-	play(a);
+	//play(a);
 	//c;
 	//d;
 	return 0;
