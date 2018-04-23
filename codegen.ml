@@ -228,6 +228,43 @@ let translate (globals, functions) =
     (*PRINT OPEN BRACKET:*)
     let closed_bracket = L.build_call printn_func [| chord_open_format_str |] "printf" builder in
 
+  let helper i7 = 
+
+    let one = L.const_int i32_t 1 in 
+    let empty = L.const_int i32_t 0 in
+    let i10 = L.build_in_bounds_gep i7 [|empty; one|] "b7" builder in 
+    L.dump_value i10;
+    let i11 = L.build_load i10 "b8" builder in 
+    L.dump_value i11;
+    
+    let i21 = L.build_alloca i32_t "b1" builder in 
+    L.dump_value i21;    
+    let i22 = L.build_alloca chordp_node "tmp" builder in 
+    L.dump_value i22;
+    let istore22 = L.build_store (expr builder e) i22 builder in
+    L.dump_value istore22; 
+    let i23 = L.build_load i22 "b3" builder in 
+    L.dump_value i23; 
+    let i24 = L.build_in_bounds_gep i11 [|empty; empty|] "b4"  builder in
+    L.dump_value i24;
+    let i25 = L.build_load i24 "b5" builder in
+    L.dump_value i25;
+
+    (*PARSE IT AS A NOTE!!!*)
+    let n21 = L.build_and i25 (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
+    let n21' = L.build_sdiv n21 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
+    let n22 = L.build_and i25 (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
+    let n22' = L.build_sdiv n22 (expr builder (Int, SIntLit 65536)) "tmp" builder in
+    let n23' = L.build_and i25 (expr builder (Int, SIntLit 65535)) "tmp" builder in 
+
+    let i26 = L.build_call printn_func [| chord_format_str ; n21'; n22'; n23' |] "printf" builder in
+    L.dump_value i26;
+    let i27 = L.build_load i22 "b7" builder in 
+    L.dump_value i27;   
+
+  in
+
+
     let i1 = L.build_alloca i32_t "b1" builder in 
     L.dump_value i1;    
     let i2 = L.build_alloca chordp_node "tmp" builder in 
@@ -254,42 +291,11 @@ let translate (globals, functions) =
     let i7 = L.build_load i2 "b7" builder in 
     L.dump_value i7;
 
-    (*SECOND ITERATION*)
-    let one = L.const_int i32_t 1 in 
-    let i10 = L.build_in_bounds_gep i7 [|empty; one|] "b7" builder in 
-    L.dump_value i10;
-    let i11 = L.build_load i10 "b8" builder in 
-    L.dump_value i11;
-
-    let i21 = L.build_alloca i32_t "b1" builder in 
-    L.dump_value i21;    
-    let i22 = L.build_alloca chordp_node "tmp" builder in 
-    L.dump_value i22;
-    let istore22 = L.build_store (expr builder e) i22 builder in
-    L.dump_value istore22; 
-    let i23 = L.build_load i22 "b3" builder in 
-    L.dump_value i23; 
-    let i24 = L.build_in_bounds_gep i11 [|empty; empty|] "b4"  builder in
-    L.dump_value i24;
-    let i25 = L.build_load i24 "b5" builder in
-    L.dump_value i25;
-
-    (*PARSE IT AS A NOTE!!!*)
-    let n21 = L.build_and i25 (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
-    let n21' = L.build_sdiv n21 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
-    let n22 = L.build_and i25 (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
-    let n22' = L.build_sdiv n22 (expr builder (Int, SIntLit 65536)) "tmp" builder in
-    let n23' = L.build_and i25 (expr builder (Int, SIntLit 65535)) "tmp" builder in 
-
-    let i26 = L.build_call printn_func [| chord_format_str ; n21'; n22'; n23' |] "printf" builder in
-    L.dump_value i26;
-    let i27 = L.build_load i22 "b7" builder in 
-    L.dump_value i27;  
-    (* END SECOND ITERATION*)
+    let nxt = helper i7 in 
 
     (*PRINT CLOSED BRACKET:*)
     let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" builder in
-    i26
+    i6
     (* MEGAN'S IN PROGRESS NOTE--DOES NOT WORK AND DOESNT MAKE SENSE  
     let i1 = L.build_alloca chordp_node "b1" builder in 
     L.dump_value i1;    
