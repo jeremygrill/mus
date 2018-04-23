@@ -95,7 +95,9 @@ let translate (globals, functions) =
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
     and note_format_str = L.build_global_stringptr "(%d,%d|%d)\n" "fmt" builder
-    and chord_format_str = L.build_global_stringptr "[(%d,%d|%d)]\n" "fmt" builder in
+    and chord_open_format_str = L.build_global_stringptr "[" "fmt" builder
+    and chord_format_str = L.build_global_stringptr "(%d,%d|%d)" "fmt" builder 
+    and chord_closed_format_str = L.build_global_stringptr "]\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -223,12 +225,13 @@ let translate (globals, functions) =
         | _ as error_code -> raise (Failure ("Error!\n"))
         )*)
        | SCall ("printc", [e]) -> 
+    (*PRINT OPEN BRACKET:*)
+    let closed_bracket = L.build_call printn_func [| chord_open_format_str |] "printf" builder in
+
     let i1 = L.build_alloca i32_t "b1" builder in 
     L.dump_value i1;    
     let i2 = L.build_alloca chordp_node "tmp" builder in 
     L.dump_value i2;
-    (*let istore2 = L.build_store (L.const_int i32_t 1) i1 builder in
-    L.dump_value istore2;*)
     let istore = L.build_store (expr builder e) i2 builder in
     L.dump_value istore; 
     let i3 = L.build_load i2 "b3" builder in 
@@ -262,8 +265,6 @@ let translate (globals, functions) =
     L.dump_value i21;    
     let i22 = L.build_alloca chordp_node "tmp" builder in 
     L.dump_value i22;
-    (*let istore22 = L.build_store (L.const_int i32_t 0) i11 builder in
-    L.dump_value istore22;*)
     let istore22 = L.build_store (expr builder e) i22 builder in
     L.dump_value istore22; 
     let i23 = L.build_load i22 "b3" builder in 
@@ -286,7 +287,9 @@ let translate (globals, functions) =
     L.dump_value i27;  
     (* END SECOND ITERATION*)
 
-    i6
+    (*PRINT CLOSED BRACKET:*)
+    let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" builder in
+    i26
     (* MEGAN'S IN PROGRESS NOTE--DOES NOT WORK AND DOESNT MAKE SENSE  
     let i1 = L.build_alloca chordp_node "b1" builder in 
     L.dump_value i1;    
