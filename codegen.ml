@@ -275,46 +275,7 @@ let translate (globals, functions) =
     (*PRINT CLOSED BRACKET:*)
     let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" builder in
     nxt
-    (* MEGAN'S IN PROGRESS NOTE--DOES NOT WORK AND DOESNT MAKE SENSE  
-    let i1 = L.build_alloca chordp_node "b1" builder in 
-    L.dump_value i1;    
-    let i2 = L.build_alloca chordp_node "tmp" builder in 
-    L.dump_value i2;
-    let istore = L.build_store (expr builder e) i1 builder in
-    L.dump_value istore;
-    let i3 = L.build_load i1 "b2" builder in 
-    L.dump_value i3;  
-    let istore2 = L.build_store i3 i2 builder in
-    L.dump_value istore2;
-    let firstbranch = L.build_load i2 "b4" builder in
-    L.dump_value firstbranch;
-    let firstbranch2 = L.build_icmp L.Icmp.Ne firstbranch L.Constant.getNullValue "b5" builder in
-    L.dump_value firstbranch2;
-    i3
-    (*
-    let branch = L.build_br i3 in
-    L.dump_value branch;
-    i3*)
-    (*
-    let empty = L.const_int i32_t 0 in
-    let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "b4"  builder in
-    L.dump_value i4;
-    let i5 = L.build_load i4 "b5" builder in
-    L.dump_value i5;
 
-    (*PARSE IT AS A NOTE!!!*)
-    let n1 = L.build_and i5 (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
-    let n1' = L.build_sdiv n1 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
-    let n2 = L.build_and i5 (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
-    let n2' = L.build_sdiv n2 (expr builder (Int, SIntLit 65536)) "tmp" builder in
-    let n3' = L.build_and i5 (expr builder (Int, SIntLit 65535)) "tmp" builder in 
-
-    let i6 = L.build_call printn_func [| chord_format_str ; n1'; n2'; n3' |] "printf" builder in
-    L.dump_value i6;
-    let i7 = L.build_load i2 "b7" builder in 
-    L.dump_value i7;  
-    i6*)
-*)
 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
