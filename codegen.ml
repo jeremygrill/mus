@@ -226,13 +226,15 @@ let translate (globals, functions) =
         )*)
        | SCall ("printc", [e]) -> 
     (*PRINT OPEN BRACKET:*)
+    let size  = L.size_of chord_node in 
+    L.dump_value size;
     let closed_bracket = L.build_call printn_func [| chord_open_format_str |] "printf" builder in
 
-  let helper i7 = 
+  let helper a = 
 
     let one = L.const_int i32_t 1 in 
     let empty = L.const_int i32_t 0 in
-    let i10 = L.build_in_bounds_gep i7 [|empty; one|] "b7" builder in 
+    let i10 = L.build_in_bounds_gep a [|empty; one|] "b7" builder in 
     L.dump_value i10;
     let i11 = L.build_load i10 "b8" builder in 
     L.dump_value i11;
@@ -260,42 +262,19 @@ let translate (globals, functions) =
     let i26 = L.build_call printn_func [| chord_format_str ; n21'; n22'; n23' |] "printf" builder in
     L.dump_value i26;
     let i27 = L.build_load i22 "b7" builder in 
-    L.dump_value i27;   
+    L.dump_value i27; 
+    i11  
 
   in
 
+    let nxt = helper (expr builder e) in 
+    let nextagain = helper nxt in
 
-    let i1 = L.build_alloca i32_t "b1" builder in 
-    L.dump_value i1;    
-    let i2 = L.build_alloca chordp_node "tmp" builder in 
-    L.dump_value i2;
-    let istore = L.build_store (expr builder e) i2 builder in
-    L.dump_value istore; 
-    let i3 = L.build_load i2 "b3" builder in 
-    L.dump_value i3;  
-    let empty = L.const_int i32_t 0 in
-    let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "b4"  builder in
-    L.dump_value i4;
-    let i5 = L.build_load i4 "b5" builder in
-    L.dump_value i5;
 
-    (*PARSE IT AS A NOTE!!!*)
-    let n1 = L.build_and i5 (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
-    let n1' = L.build_sdiv n1 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
-    let n2 = L.build_and i5 (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
-    let n2' = L.build_sdiv n2 (expr builder (Int, SIntLit 65536)) "tmp" builder in
-    let n3' = L.build_and i5 (expr builder (Int, SIntLit 65535)) "tmp" builder in 
-
-    let i6 = L.build_call printn_func [| chord_format_str ; n1'; n2'; n3' |] "printf" builder in
-    L.dump_value i6;
-    let i7 = L.build_load i2 "b7" builder in 
-    L.dump_value i7;
-
-    let nxt = helper i7 in 
 
     (*PRINT CLOSED BRACKET:*)
     let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" builder in
-    i6
+    nxt
     (* MEGAN'S IN PROGRESS NOTE--DOES NOT WORK AND DOESNT MAKE SENSE  
     let i1 = L.build_alloca chordp_node "b1" builder in 
     L.dump_value i1;    
