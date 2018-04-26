@@ -88,10 +88,21 @@ let translate (globals, functions) =
       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
     List.fold_left function_decl StringMap.empty functions in
   
+  let add_terminal builder instr =
+                           (* The current block where we're inserting instr *)
+            match L.block_terminator (L.insertion_block builder) with
+              Some _ -> ()
+            | None -> ignore (instr builder) in
+
   (* Fill in the body of the given function *)
   let build_function_body fdecl =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
-    let builder = L.builder_at_end context (L.entry_block the_function) in
+    let func_bb = L.entry_block the_function in
+    let builder = L.builder_at_end context func_bb in
+    (* In current block, branch to predicate to execute the condition *)
+    (*let _ = L.build_br func_bb builder in*)
+    (*let () = add_terminal builder (L.build_br func_bb) in*)
+
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
     and note_format_str = L.build_global_stringptr "(%d,%d|%d)\n" "fmt" builder
@@ -294,6 +305,35 @@ let translate (globals, functions) =
     L.dump_value i7;
 
     let nxt = helper i7 in 
+
+          let pred_bb = L.append_block context "while" the_function in
+          (* In current block, branch to predicate to execute the condition *)
+          let _ = L.build_br pred_bb builder in
+
+          let add_terminal builder instr =
+                           (* The current block where we're inserting instr *)
+            match L.block_terminator (L.insertion_block builder) with
+              Some _ -> ()
+            | None -> ignore (instr builder) in
+  
+          (* Create the body's block, generate the code for it, and add a branch
+          back to the predicate block (we always jump back at the end of a while
+          loop's body, unless we returned or something) *)
+          let body_bb = L.append_block context "while_body" the_function in
+          let while_builder = (L.builder_at_end context body_bb) in
+          let () = add_terminal while_builder (L.build_br pred_bb) in
+
+          (* Generate the predicate code in the predicate block *)
+          let pred_builder = L.builder_at_end context pred_bb in
+          let predicate = (A.Int, SBoolLit(false)) in 
+          let bool_val = expr pred_builder predicate in
+
+          (* Hook everything up *)
+          let merge_bb = L.append_block context "merge" the_function in
+          let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
+          let merge_builder = L.builder_at_end context merge_bb in
+          let () = add_terminal merge_builder (L.build_br pred_bb) in
+          (*L.dump_value final;*)
 
     (*PRINT CLOSED BRACKET:*)
     let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" builder in
