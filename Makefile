@@ -25,19 +25,20 @@ tests: all
 .PHONY : hello
 hello: all
 	./toplevel.native tests/hello.mus > tests/hello.ll
-	llc tests/hello.ll
-	cc tests/hello.s
+	llc tests/hello.ll > tests/hello.s
+	cc tests/hello.s printc.o
 	./a.out > tests/hello.out
 	cat tests/hello.out
 	
 .PHONY : all
-all : toplevel.native
+all : toplevel.native printc.o
 
 .PHONY : toplevel.native
 toplevel.native :
 	rm -f *.o
 	ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis -cflags -w,+a-4 \
 		toplevel.native
+
 
 # "make clean" removes all generated files
 
@@ -54,6 +55,7 @@ clean :
 OBJS = ast.cmx sast.cmx codegen.cmx parser.cmx scanner.cmx semant.cmx toplevel.cmx
 
 toplevel : $(OBJS)
+	cc -o -DBUILD_TEST printc.c
 	ocamlfind ocamlopt -linkpkg -package llvm -package llvm.analysis $(OBJS) -o toplevel
 
 scanner.ml : scanner.mll

@@ -63,12 +63,15 @@ let translate (globals, functions) =
   let printf_func = L.declare_function "printf" printf_t the_module in
 
   (* printing note*)
-  let printn_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
+  let printn_t = L.function_type i32_t [| L.pointer_type i8_t |] in 
   let printn_func = L.declare_function "printf" printn_t the_module in
 
   (* printing chord*)
-  let printc_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
-  let printc_func = L.declare_function "printf" printc_t the_module in
+  (*let printc_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
+  let printc_func = L.declare_function "printf" printc_t the_module in*)
+
+  let printc_t = L.function_type i32_t [| chordp_node |] in
+  let printc_func = L.declare_function "printc" printc_t the_module in
 
   (*Ethan stuff*)
   let play_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
@@ -182,7 +185,7 @@ let translate (globals, functions) =
     L.dump_value istore3; 
     let i7 = L.build_load obj "a7" builder in 
     L.dump_value i7;
-    i3
+    i7
     in (*end "helper"*)
 
     let i8 = List.fold_right helper e (L.const_null chordp_node) in (*NEED TO FIGURE OUT HOW TO FEED IN A NULL CHORD POINTER*)
@@ -236,8 +239,11 @@ let translate (globals, functions) =
     (*PRINT OPEN BRACKET:*)
     let size  = L.size_of chord_node in 
     L.dump_value size;
-    let closed_bracket = L.build_call printn_func [| chord_open_format_str |] "printf" builder in
+    let e' = expr builder e in 
+    L.dump_value e';
+    L.build_call printc_func [| e' |] "printc" builder
 
+(*
   let helper a = 
 
     let one = L.const_int i32_t 1 in 
@@ -301,7 +307,8 @@ let translate (globals, functions) =
     let i7 = L.build_load i2 "b7" builder in 
     L.dump_value i7;
 
-    (*let nxt = helper i7 in *)
+    (*let nxt = helper i7 in
+    let nxt2 = helper nxt in*)
 
       (*4/26 TRYING TO IMPLEMENT AS A RECURSIVE FUNCTION:*)
     (*
@@ -315,10 +322,18 @@ let translate (globals, functions) =
 
       (*4/25 TRYING TO BUILD WITH BRANCH INSTRUCTINOS*)
 
-(*
+
           let pred_bb = L.append_block context "while" the_function in
           (* In current block, branch to predicate to execute the condition *)
           let _ = L.build_br pred_bb builder in
+
+
+          (* Generate the predicate code in the predicate block *)
+          let pred_builder = L.builder_at_end context pred_bb in
+          let predicate = (A.Int, SBoolLit(false)) in 
+          let bool_val = expr pred_builder predicate in
+                    (*let () = add_terminal merge_builder (L.build_br pred_bb) in
+
 
           (*let add_terminal builder instr =
                            (* The current block where we're inserting instr *)
@@ -333,21 +348,16 @@ let translate (globals, functions) =
           let while_builder = (L.builder_at_end context body_bb) in
           let () = add_terminal while_builder (L.build_br pred_bb) in
 
-          (* Generate the predicate code in the predicate block *)
-          let pred_builder = L.builder_at_end context pred_bb in
-          let predicate = (A.Int, SBoolLit(false)) in 
-          let bool_val = expr pred_builder predicate in
 
           (* Hook everything up *)
           let merge_bb = L.append_block context "merge" the_function in
           let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
           let merge_builder = L.builder_at_end context merge_bb in
-          let () = add_terminal merge_builder (L.build_br pred_bb) in
+    let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" merge_builder in
+*)
           (*L.dump_value final;*)
 *)
     (*PRINT CLOSED BRACKET:*)
-    let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" builder in
-    i6
 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
@@ -399,7 +409,7 @@ let translate (globals, functions) =
     let rec stmt builder = function
   SBlock sl -> List.fold_left stmt builder sl
       | SExpr e -> let _ = expr builder e in builder 
-      | SReturn e -> let _ = match fdecl.styp with
+      | SReturn e -> let _ = L.dump_module the_module; match fdecl.styp with
                               A.Int -> L.build_ret (expr builder e) builder 
                             | _ -> to_imp (A.string_of_typ fdecl.styp)
                      in builder

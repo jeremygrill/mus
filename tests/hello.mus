@@ -5,6 +5,7 @@ Int main()
 	Bool b;
 	Note a;
 	Note n;
+	Note suh;
 	Chord c;
 	Chord d;
 	4 + 2;
@@ -12,11 +13,13 @@ Int main()
 	//b = true;
 	a = (11,1|11);
 	n = (2,22|2);
+	suh = (3,3|3);
 	//d = [a a a a a];
-	c = [a n a];
+	c = [a];
+	//c = [a n];
 	//print(88);
-	printn(n);
-	printn(a);
+	//printn(n);
+	//printn(a);
 	printc(c);
 	//play(a);
 	//c;
