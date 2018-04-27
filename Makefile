@@ -28,6 +28,7 @@ hello: all
 	llc tests/hello.ll
 	cc tests/hello.s
 	./a.out > tests/hello.out
+	cat tests/hello.out
 	
 .PHONY : all
 all : toplevel.native

@@ -99,9 +99,6 @@ let translate (globals, functions) =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
     let func_bb = L.entry_block the_function in
     let builder = L.builder_at_end context func_bb in
-    (* In current block, branch to predicate to execute the condition *)
-    (*let _ = L.build_br func_bb builder in*)
-    (*let () = add_terminal builder (L.build_br func_bb) in*)
 
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
@@ -304,17 +301,30 @@ let translate (globals, functions) =
     let i7 = L.build_load i2 "b7" builder in 
     L.dump_value i7;
 
-    let nxt = helper i7 in 
+    (*let nxt = helper i7 in *)
 
+      (*4/26 TRYING TO IMPLEMENT AS A RECURSIVE FUNCTION:*)
+    (*
+    let rec nxt_func instr = 
+      let nxt_instr = helper instr in 
+      let i10 = L.build_in_bounds_gep i7 [|L.const_int i32_t 0; L.const_int i32_t 1|] "b7" builder in
+      let i11 = L.build_load i10 "b8" builder in 
+      if nxt_instr != i11 then nxt_func nxt_instr in
+    let nxt = nxt_func i7 in 
+    *)
+
+      (*4/25 TRYING TO BUILD WITH BRANCH INSTRUCTINOS*)
+
+(*
           let pred_bb = L.append_block context "while" the_function in
           (* In current block, branch to predicate to execute the condition *)
           let _ = L.build_br pred_bb builder in
 
-          let add_terminal builder instr =
+          (*let add_terminal builder instr =
                            (* The current block where we're inserting instr *)
             match L.block_terminator (L.insertion_block builder) with
               Some _ -> ()
-            | None -> ignore (instr builder) in
+            | None -> ignore (instr builder) in*)
   
           (* Create the body's block, generate the code for it, and add a branch
           back to the predicate block (we always jump back at the end of a while
@@ -334,11 +344,10 @@ let translate (globals, functions) =
           let merge_builder = L.builder_at_end context merge_bb in
           let () = add_terminal merge_builder (L.build_br pred_bb) in
           (*L.dump_value final;*)
-
+*)
     (*PRINT CLOSED BRACKET:*)
     let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" builder in
     i6
-
 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
