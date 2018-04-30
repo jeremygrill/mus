@@ -121,6 +121,7 @@ let check (globals, functions) =
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
             Add | Sub | Mult | Div when same && t1 = Int   -> Int
+          | Add                    when t1 = Note          -> Chord
           | Eq | Neq               when same               -> Bool
           | Less | Leq | Greater | Geq
                        when same && (t1 = Int)             -> Bool

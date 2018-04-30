@@ -23,14 +23,14 @@ tests: all
 	./a.out > tests/test-chord.out
 
 .PHONY : hello
-hello: all
+hello: all 
 	./toplevel.native tests/hello.mus > tests/hello.ll
 	llc tests/hello.ll
 	cc tests/hello.s
 	./a.out > tests/hello.out
 	
 .PHONY : all
-all : toplevel.native
+all : toplevel.native chordbuilder.o
 
 .PHONY : toplevel.native
 toplevel.native :
@@ -58,6 +58,8 @@ toplevel : $(OBJS)
 scanner.ml : scanner.mll
 	ocamllex scanner.mll
 
+chordbuilder: chordbuilder.c
+	cc -o printbig -DBUILD_TEST chordbuilder.o
 parser.ml parser.mli : parser.mly
 	ocamlyacc parser.mly
 

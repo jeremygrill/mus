@@ -66,6 +66,9 @@ let translate (globals, functions) =
   let printn_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
   let printn_func = L.declare_function "printf" printn_t the_module in
 
+  let chordbuilder_t = L.var_arg_function_type chordp_node [|L.pointer_type i32_t ; L.pointer_type i32_t |] in
+  let chordbuilder_func = L.declare_function "chordbuilder" chordbuilder_t the_module in
+
   (* printing chord*)
   let printc_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
   let printc_func = L.declare_function "printf" printc_t the_module in
@@ -149,32 +152,32 @@ let translate (globals, functions) =
     L.dump_value obj;
 
     let helper elem ptr = 
-    let i1 = L.build_malloc chord_node "a2" builder in
-    L.dump_value i1;
-    let istore = L.build_store i1 obj builder in
-    L.dump_value istore; 
-    let i3 = L.build_load obj "a3" builder in
-    L.dump_value i3; 
+          let i1 = L.build_malloc chord_node "a2" builder in
+          L.dump_value i1;
+          let istore = L.build_store i1 obj builder in
+          L.dump_value istore; 
+          let i3 = L.build_load obj "a3" builder in
+          L.dump_value i3; 
 
-    let empty = L.const_int i32_t 0 in
+          let empty = L.const_int i32_t 0 in
 
-    let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-    L.dump_value i4; 
+          let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+          L.dump_value i4; 
 
-    let istore2 = L.build_store (expr builder elem) i4 builder in
-    L.dump_value istore2;
+          let istore2 = L.build_store (expr builder elem) i4 builder in
+          L.dump_value istore2;
 
-    let i5 = L.build_load obj "a5" builder in
-    L.dump_value i5;
-    let one = L.const_int i32_t 1 in 
-    let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-    L.dump_value i6;
+          let i5 = L.build_load obj "a5" builder in
+          L.dump_value i5;
+          let one = L.const_int i32_t 1 in 
+          let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+          L.dump_value i6;
 
-    let istore3 = L.build_store ptr i6 builder in
-    L.dump_value istore3; 
-    let i7 = L.build_load obj "a7" builder in 
-    L.dump_value i7;
-    i3
+          let istore3 = L.build_store ptr i6 builder in
+          L.dump_value istore3; 
+          let i7 = L.build_load obj "a7" builder in 
+          L.dump_value i7;
+          i3
     in (*end "helper"*)
 
     let i8 = List.fold_right helper e (L.const_null chordp_node) in (*NEED TO FIGURE OUT HOW TO FEED IN A NULL CHORD POINTER*)
@@ -338,9 +341,45 @@ let translate (globals, functions) =
 *)
 
        | SBinop (e1, op, e2) ->
+
     let (t, _) = e1
     and e1' = expr builder e1
     and e2' = expr builder e2 in
+    (*let chordbuilder e1 e2 tmp builder = L.build_call chordbuilder_func [|e1' ; e2'|] "chordbuilder" builder in*)
+     
+    let obj = L.build_alloca chordp_node "c1" builder in 
+
+    let helper elem ptr = 
+          let i1 = L.build_malloc chord_node "a2" builder in
+          L.dump_value i1;
+          let istore = L.build_store i1 obj builder in
+          L.dump_value istore; 
+          let i3 = L.build_load obj "a3" builder in
+          L.dump_value i3; 
+
+          let empty = L.const_int i32_t 0 in
+
+          let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+          L.dump_value i4; 
+
+          let istore2 = L.build_store (expr builder elem) i4 builder in
+          L.dump_value istore2;
+
+          let i5 = L.build_load obj "a5" builder in
+          L.dump_value i5;
+          let one = L.const_int i32_t 1 in 
+          let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+          L.dump_value i6;
+
+          let istore3 = L.build_store ptr i6 builder in
+          L.dump_value istore3; 
+          let i7 = L.build_load obj "a7" builder in 
+          L.dump_value i7;
+          i3
+    in
+
+
+
     if t = A.Int then (match op with 
     | A.Add     -> L.build_add
     | A.Sub     -> L.build_sub
@@ -355,7 +394,14 @@ let translate (globals, functions) =
     | A.Greater -> L.build_icmp L.Icmp.Sgt
     | A.Geq     -> L.build_icmp L.Icmp.Sge
     | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
-    ) e1' e2' "tmp" builder 
+    ) e1' e2' "tmp" builder
+ (* else if t = A.Note then (match op with
+    | A.Add     ->
+        let elist = expr builder [e1' ; e2'] in
+        let i8 = List.fold_right helper elist (L.const_null chordp_node) in 
+        let final = L.build_load obj "final" builder in 
+        final 
+    ) e1' e2' "tmp" builder *)
     else (match op with
     | A.Add     -> L.build_add
     | A.Sub     -> L.build_sub
