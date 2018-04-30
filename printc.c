@@ -8,14 +8,16 @@ struct chord_node{
 	struct chord_node * next_note;
 };
 
-int printc(struct chord_node * list){
+int printc(struct chord_node* list){
 	
 	struct chord_node * tmp = list;
 
-	while(tmp != NULL){
-		printf("[%d]", tmp->note);
-		tmp = tmp->next_note;
-	}
+	//while(tmp != NULL) {
+		printf("[%d]\n", tmp->note);
+		//tmp = tmp->note;
+
+		printf("[%d]\n", tmp->next_note);
+	//} 
 	return 0;
 	
 }

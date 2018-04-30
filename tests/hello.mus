@@ -15,7 +15,7 @@ Int main()
 	n = (2,22|2);
 	suh = (3,3|3);
 	//d = [a a a a a];
-	c = [a];
+	c = [n a suh];
 	//c = [a n];
 	//print(88);
 	//printn(n);

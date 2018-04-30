@@ -159,36 +159,35 @@ let translate (globals, functions) =
     let obj = L.build_alloca chordp_node "c1" builder in 
     L.dump_value obj;
 
-    let helper elem ptr = 
-    let i1 = L.build_malloc chord_node "a2" builder in
-    L.dump_value i1;
-    let istore = L.build_store i1 obj builder in
-    L.dump_value istore; 
-    let i3 = L.build_load obj "a3" builder in
-    L.dump_value i3; 
+    let helper ptr elem = 
+      let i1 = L.build_malloc chord_node "a2" builder in
+      L.dump_value i1;
+      let istore = L.build_store i1 obj builder in
+      L.dump_value istore; 
+      let i3 = L.build_load obj "a3" builder in
+      L.dump_value i3; 
 
-    let empty = L.const_int i32_t 0 in
+      let empty = L.const_int i32_t 0 in
 
-    let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-    L.dump_value i4; 
+      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+      L.dump_value i4; 
 
-    let istore2 = L.build_store (expr builder elem) i4 builder in
-    L.dump_value istore2;
+      let istore2 = L.build_store (expr builder elem) i4 builder in
+      L.dump_value istore2;
 
-    let i5 = L.build_load obj "a5" builder in
-    L.dump_value i5;
-    let one = L.const_int i32_t 1 in 
-    let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-    L.dump_value i6;
+      let i5 = L.build_load obj "a5" builder in
+      L.dump_value i5;
+      let one = L.const_int i32_t 1 in 
+      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+      L.dump_value i6;
 
-    let istore3 = L.build_store ptr i6 builder in
-    L.dump_value istore3; 
-    let i7 = L.build_load obj "a7" builder in 
-    L.dump_value i7;
-    i7
-    in (*end "helper"*)
+      let istore3 = L.build_store ptr i6 builder in
+      L.dump_value istore3; 
+      let i7 = L.build_load obj "a7" builder in 
+      L.dump_value i7;
+      i7 in (*end "helper"*)
 
-    let i8 = List.fold_right helper e (L.const_null chordp_node) in (*NEED TO FIGURE OUT HOW TO FEED IN A NULL CHORD POINTER*)
+    let i8 = List.fold_left helper (L.const_null chordp_node) e in
     L.dump_value i8;
     let final = L.build_load obj "final" builder in 
     L.dump_value final;
