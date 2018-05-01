@@ -37,7 +37,7 @@ let translate (globals, functions) =
 
   let chord_node  = L.named_struct_type context "chord_node" in
   let chordp_node = L.pointer_type chord_node in
-  L.struct_set_body chord_node [| i32_t; chordp_node; |] true; 
+  L.struct_set_body chord_node [| i32_t; chordp_node; |] false; 
 
 
   (* Convert MicroC types to LLVM types *)
@@ -159,7 +159,7 @@ let translate (globals, functions) =
 
 
 
-    let helper elem ptr = 
+    let helper ptr elem = 
 
       let obj = L.build_alloca chordp_node "c1" builder in 
       L.dump_value obj;
@@ -190,7 +190,7 @@ let translate (globals, functions) =
       L.dump_value i7;
       i7 in (*end "helper"*)
 
-    let i8 = List.fold_right helper e (L.const_null chordp_node) in
+    let i8 = List.fold_left helper (L.const_null chordp_node) e in
     L.dump_value i8;
 
     i8

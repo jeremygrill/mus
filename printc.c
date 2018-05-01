@@ -21,37 +21,12 @@ int printnote(int note){
 int printc(struct chord_node* list){
 	printf("[");
 
-	//struct chord_node * tmp = list;
-	/*struct chord_node * a = list;
-	struct chord_node * b = list;
-
-	a -> next_note = b;
-	a -> note = 9;
-	b -> next_note = a;
-	b -> note = 44;*/
-
-	//printf("[%d]\n", a->next_note);
-	if(list->next_note == NULL)
-		printf("Nope");
-	else 
-	{
-		printf("pointer %p\n", list);
-		printf("note %d\n", list->note);
-
-		printf("next %p\n", list->next_note);
-		printf("next %d\n", list->next_note->note);
-
-		//struct chord_node *tmp2 = list->next_note;
-		//printf("%d\n", tmp2->note);	
-		//printf("[%d]\n", list->next_note->note);
+	struct chord_node * tmp = list;
+	while(tmp != NULL) {
+		printnote(tmp->note);
+		tmp = tmp -> next_note;
 	}
-
-	//while(tmp != NULL) {
-
-	//printnote(tmp->note);
-		
-	printf("]\n");
-	//} 
-	return 0;
 	
+	printf("]\n");
+	return 0;
 }
