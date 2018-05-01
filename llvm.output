@@ -1,0 +1,13 @@
+rm -f *.o
+ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis -cflags -w,+a-4 \
+		toplevel.native
+cc    -c -o printc.o printc.c
+./toplevel.native tests/hello.mus > tests/hello.ll
+llc tests/hello.ll > tests/hello.s
+cc tests/hello.s printc.o
+./a.out > tests/hello.out
+cat tests/hello.out
+[pointer 0x7fa9bb403280
+note 34996226
+next 0x6000000000007fa9
+]

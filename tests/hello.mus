@@ -1,25 +1,27 @@
 Int main()
 {
-	Int i;
-	Int j;
-	Bool b;
+	//Int i;
+	//Int j;
+	//Bool b;
 	Note a;
+	//Chord hello;
 	Note n;
-	Note suh;
+	//Note suh;
 	Chord c;
-	Chord d;
-	4 + 2;
-	i = 1; 
+	//Chord d;
+	//4 + 2;
+	//i = 1; 
 	//b = true;
 	a = (11,1|11);
+	//suh = (3,3|3);
+	//hello = a + suh;
 	n = (2,22|2);
-	suh = (3,3|3);
 	//d = [a a a a a];
-	c = [n a suh];
+	c = [a n];
 	//c = [a n];
 	//print(88);
 	//printn(n);
-	//printn(a);
+	//printc(hello);
 	printc(c);
 	//play(a);
 	//c;

@@ -70,7 +70,7 @@ let translate (globals, functions) =
   (*let printc_t = L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in 
   let printc_func = L.declare_function "printf" printc_t the_module in*)
 
-  let printc_t = L.function_type i32_t [| chordp_node |] in
+  let printc_t = L.function_type i32_t [| L.pointer_type chord_node |] in
   let printc_func = L.declare_function "printc" printc_t the_module in
 
   (*Ethan stuff*)
@@ -156,18 +156,22 @@ let translate (globals, functions) =
        L.build_or n3' n12' "tmp" builder 
        | SChordLit (e) -> 
     
-    let obj = L.build_alloca chordp_node "c1" builder in 
-    L.dump_value obj;
 
-    let helper ptr elem = 
+
+
+    let helper elem ptr = 
+
+      let obj = L.build_alloca chordp_node "c1" builder in 
+      L.dump_value obj;
+
+      let one = L.const_int i32_t 1 in 
+      let empty = L.const_int i32_t 0 in
       let i1 = L.build_malloc chord_node "a2" builder in
       L.dump_value i1;
       let istore = L.build_store i1 obj builder in
       L.dump_value istore; 
       let i3 = L.build_load obj "a3" builder in
       L.dump_value i3; 
-
-      let empty = L.const_int i32_t 0 in
 
       let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
       L.dump_value i4; 
@@ -177,7 +181,6 @@ let translate (globals, functions) =
 
       let i5 = L.build_load obj "a5" builder in
       L.dump_value i5;
-      let one = L.const_int i32_t 1 in 
       let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
       L.dump_value i6;
 
@@ -187,11 +190,10 @@ let translate (globals, functions) =
       L.dump_value i7;
       i7 in (*end "helper"*)
 
-    let i8 = List.fold_left helper (L.const_null chordp_node) e in
+    let i8 = List.fold_right helper e (L.const_null chordp_node) in
     L.dump_value i8;
-    let final = L.build_load obj "final" builder in 
-    L.dump_value final;
-    final
+
+    i8
     (*let next = List.hd e in
     let e1' = expr builder next in*)
 
@@ -235,12 +237,14 @@ let translate (globals, functions) =
         | _ as error_code -> raise (Failure ("Error!\n"))
         )*)
        | SCall ("printc", [e]) -> 
-    (*PRINT OPEN BRACKET:*)
-    let size  = L.size_of chord_node in 
-    L.dump_value size;
+
     let e' = expr builder e in 
+
     L.dump_value e';
-    L.build_call printc_func [| e' |] "printc" builder
+    L.dump_value e';
+    L.dump_value e';
+    L.dump_value e';
+    L.build_call printc_func [| e' |] "printc" builder 
 
 (*
   let helper a = 
@@ -304,8 +308,8 @@ let translate (globals, functions) =
     let i6 = L.build_call printn_func [| chord_format_str ; n1'; n2'; n3' |] "printf" builder in
     L.dump_value i6;
     let i7 = L.build_load i2 "b7" builder in 
-    L.dump_value i7;
-
+    L.dump_value i7; 
+*)
     (*let nxt = helper i7 in
     let nxt2 = helper nxt in*)
 
@@ -321,7 +325,7 @@ let translate (globals, functions) =
 
       (*4/25 TRYING TO BUILD WITH BRANCH INSTRUCTINOS*)
 
-
+(*)
           let pred_bb = L.append_block context "while" the_function in
           (* In current block, branch to predicate to execute the condition *)
           let _ = L.build_br pred_bb builder in
@@ -377,6 +381,10 @@ let translate (globals, functions) =
     | A.Geq     -> L.build_icmp L.Icmp.Sge
     | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
     ) e1' e2' "tmp" builder 
+    else if t = A.Note then (match op with 
+    | A.Add     -> L.build_add 
+    | _         -> raise (Failure("bad"))
+    ) e1' e2' "tmp" builder
     else (match op with
     | A.Add     -> L.build_add
     | A.Sub     -> L.build_sub
