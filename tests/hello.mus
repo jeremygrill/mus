@@ -22,7 +22,7 @@ Int main()
 	//printc(hello);
 	printc(c);
 	printc(d);
-	//play(a);
+	play(a);
 	//c;
 	//d;
 	return 0;

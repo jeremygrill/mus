@@ -26,7 +26,7 @@ tests: all
 hello: all
 	./toplevel.native tests/hello.mus > tests/hello.ll
 	llc tests/hello.ll > tests/hello.s
-	cc tests/hello.s printc.o
+	cc tests/hello.s printc.o play.o MidiFile.h MidiEventList.h Binasc.h Options.h MidiEvent.h MidiMessage.h
 	./a.out > tests/hello.out
 	cat tests/hello.out
 	

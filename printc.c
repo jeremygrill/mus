@@ -26,7 +26,7 @@ int printc(struct chord_node* list){
 		printnote(tmp->note);
 		tmp = tmp -> next_note;
 	}
-	
+
 	printf("]\n");
 	return 0;
 }
