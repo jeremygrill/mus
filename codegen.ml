@@ -156,9 +156,6 @@ let translate (globals, functions) =
        L.build_or n3' n12' "tmp" builder 
        | SChordLit (e) -> 
     
-
-
-
     let helper ptr elem = 
 
       let obj = L.build_alloca chordp_node "c1" builder in 
@@ -194,30 +191,7 @@ let translate (globals, functions) =
     L.dump_value i8;
 
     i8
-    (*let next = List.hd e in
-    let e1' = expr builder next in*)
 
-
-
-
-    (*let a = L.const_struct context [| expr builder (Int, SIntLit 1); L.const_pointer_null i32_t |] in 
-    let a_ptr = L.build_gep (L.const_int i32_t 0) [| (L.const_int i32_t 4) |] "chord_node" builder in
-    a_ptr*)
-
-    (*let act_list = L.build_load list_pointer "cur_list" builder in
-      let pointer_to_element = L.build_gep act_list [| index |] "pointer_to_element" builder in*)
-
-    (*L.const_int i32_t 1*) (* this is the safe line *)
-    (*let e1' = List.map (expr builder) e1 in
-    let typ  = L.pointer_type (L.type_of (List.hd e1')) in
-    let size = L.const_int i32_t (List.length e1') in
-    let arr  = L.build_array_malloc typ size "arr" builder in arr*)
-    (*let arr_e = List.iteri (L.build_gep arr [| L.const_int i32_t i |] "arr_e" builder) in *)
-    (*let fill i e =
-      L.build_gep arr [| L.const_int i32_t i |] "arr_e" builder in
-    (* Populate Array with Values *)
-    List.iteri fill 2 e1' in
-    e1'*)
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
        | SCall ("printn", [e]) -> 
     let e' = expr builder e in 
@@ -246,122 +220,6 @@ let translate (globals, functions) =
     L.dump_value e';
     L.build_call printc_func [| e' |] "printc" builder 
 
-(*
-  let helper a = 
-
-    let one = L.const_int i32_t 1 in 
-    let empty = L.const_int i32_t 0 in
-    let i10 = L.build_in_bounds_gep a [|empty; one|] "b7" builder in 
-    L.dump_value i10;
-    let i11 = L.build_load i10 "b8" builder in 
-    L.dump_value i11;
-    
-    let i21 = L.build_alloca i32_t "b1" builder in 
-    L.dump_value i21;    
-    let i22 = L.build_alloca chordp_node "tmp" builder in 
-    L.dump_value i22;
-    let istore22 = L.build_store (expr builder e) i22 builder in
-    L.dump_value istore22; 
-    let i23 = L.build_load i22 "b3" builder in 
-    L.dump_value i23; 
-    let i24 = L.build_in_bounds_gep i11 [|empty; empty|] "b4"  builder in
-    L.dump_value i24;
-    let i25 = L.build_load i24 "b5" builder in
-    L.dump_value i25;
-
-    (*PARSE IT AS A NOTE!!!*)
-    let n21 = L.build_and i25 (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
-    let n21' = L.build_sdiv n21 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
-    let n22 = L.build_and i25 (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
-    let n22' = L.build_sdiv n22 (expr builder (Int, SIntLit 65536)) "tmp" builder in
-    let n23' = L.build_and i25 (expr builder (Int, SIntLit 65535)) "tmp" builder in 
-
-    let i26 = L.build_call printn_func [| chord_format_str ; n21'; n22'; n23' |] "printf" builder in
-    L.dump_value i26;
-    let i27 = L.build_load i22 "b7" builder in 
-    L.dump_value i27; 
-    i11  
-
-  in
-  
-    let i1 = L.build_alloca i32_t "b1" builder in 
-    L.dump_value i1;    
-    let i2 = L.build_alloca chordp_node "tmp" builder in 
-    L.dump_value i2;
-    let istore = L.build_store (expr builder e) i2 builder in
-    L.dump_value istore; 
-    let i3 = L.build_load i2 "b3" builder in 
-    L.dump_value i3;  
-    let empty = L.const_int i32_t 0 in
-    let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "b4"  builder in
-    L.dump_value i4;
-    let i5 = L.build_load i4 "b5" builder in
-    L.dump_value i5;
-
-    (*PARSE IT AS A NOTE!!!*)
-    let n1 = L.build_and i5 (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
-    let n1' = L.build_sdiv n1 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
-    let n2 = L.build_and i5 (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
-    let n2' = L.build_sdiv n2 (expr builder (Int, SIntLit 65536)) "tmp" builder in
-    let n3' = L.build_and i5 (expr builder (Int, SIntLit 65535)) "tmp" builder in 
-
-    let i6 = L.build_call printn_func [| chord_format_str ; n1'; n2'; n3' |] "printf" builder in
-    L.dump_value i6;
-    let i7 = L.build_load i2 "b7" builder in 
-    L.dump_value i7; 
-*)
-    (*let nxt = helper i7 in
-    let nxt2 = helper nxt in*)
-
-      (*4/26 TRYING TO IMPLEMENT AS A RECURSIVE FUNCTION:*)
-    (*
-    let rec nxt_func instr = 
-      let nxt_instr = helper instr in 
-      let i10 = L.build_in_bounds_gep i7 [|L.const_int i32_t 0; L.const_int i32_t 1|] "b7" builder in
-      let i11 = L.build_load i10 "b8" builder in 
-      if nxt_instr != i11 then nxt_func nxt_instr in
-    let nxt = nxt_func i7 in 
-    *)
-
-      (*4/25 TRYING TO BUILD WITH BRANCH INSTRUCTINOS*)
-
-(*)
-          let pred_bb = L.append_block context "while" the_function in
-          (* In current block, branch to predicate to execute the condition *)
-          let _ = L.build_br pred_bb builder in
-
-
-          (* Generate the predicate code in the predicate block *)
-          let pred_builder = L.builder_at_end context pred_bb in
-          let predicate = (A.Int, SBoolLit(false)) in 
-          let bool_val = expr pred_builder predicate in
-                    (*let () = add_terminal merge_builder (L.build_br pred_bb) in
-
-
-          (*let add_terminal builder instr =
-                           (* The current block where we're inserting instr *)
-            match L.block_terminator (L.insertion_block builder) with
-              Some _ -> ()
-            | None -> ignore (instr builder) in*)
-  
-          (* Create the body's block, generate the code for it, and add a branch
-          back to the predicate block (we always jump back at the end of a while
-          loop's body, unless we returned or something) *)
-          let body_bb = L.append_block context "while_body" the_function in
-          let while_builder = (L.builder_at_end context body_bb) in
-          let () = add_terminal while_builder (L.build_br pred_bb) in
-
-
-          (* Hook everything up *)
-          let merge_bb = L.append_block context "merge" the_function in
-          let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
-          let merge_builder = L.builder_at_end context merge_bb in
-    let closed_bracket = L.build_call printn_func [| chord_closed_format_str |] "printf" merge_builder in
-*)
-          (*L.dump_value final;*)
-*)
-    (*PRINT CLOSED BRACKET:*)
-
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
     and e1' = expr builder e1
@@ -382,9 +240,24 @@ let translate (globals, functions) =
     | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
     ) e1' e2' "tmp" builder 
     else if t = A.Note then (match op with 
-    | A.Add     -> L.build_add 
+    | A.Mult     -> 
+    let helper ptr elem = 
+      let obj = L.build_alloca chordp_node "c1" builder in 
+      let one = L.const_int i32_t 1 in 
+      let empty = L.const_int i32_t 0 in
+      let i1 = L.build_malloc chord_node "a2" builder in
+      let istore = L.build_store i1 obj builder in
+      let i3 = L.build_load obj "a3" builder in
+      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+      let istore2 = L.build_store (expr builder elem) i4 builder in
+      let i5 = L.build_load obj "a5" builder in
+      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+      let istore3 = L.build_store ptr i6 builder in
+      let i7 = L.build_load obj "a7" builder in 
+      i7 in (*end "helper"*)
+    let i8 = List.fold_left helper (L.const_null chordp_node) [e2 ; e1] in i8
     | _         -> raise (Failure("bad"))
-    ) e1' e2' "tmp" builder
+    )
     else (match op with
     | A.Add     -> L.build_add
     | A.Sub     -> L.build_sub
