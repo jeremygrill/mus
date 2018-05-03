@@ -31,9 +31,6 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context 
   and i1_t       = L.i1_type     context in 
-  let i8p_t      = L.pointer_type i8_t in
-  let i32p_t     = L.pointer_type i32_t in 
-  let i32pp_t    = L.pointer_type i32p_t in 
 
   let chord_node  = L.named_struct_type context "chord_node" in
   let chordp_node = L.pointer_type chord_node in
@@ -90,12 +87,6 @@ let translate (globals, functions) =
       in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
     List.fold_left function_decl StringMap.empty functions in
-  
-  let add_terminal builder instr =
-                           (* The current block where we're inserting instr *)
-            match L.block_terminator (L.insertion_block builder) with
-              Some _ -> ()
-            | None -> ignore (instr builder) in
 
   (* Fill in the body of the given function *)
   let build_function_body fdecl =
@@ -105,10 +96,7 @@ let translate (globals, functions) =
 
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and note_format_str = L.build_global_stringptr "(%d,%d|%d)\n" "fmt" builder
-    and chord_open_format_str = L.build_global_stringptr "[" "fmt" builder
-    and chord_format_str = L.build_global_stringptr "(%d,%d|%d)" "fmt" builder 
-    and chord_closed_format_str = L.build_global_stringptr "]\n" "fmt" builder in
+    and note_format_str = L.build_global_stringptr "(%d,%d|%d)\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -148,8 +136,8 @@ let translate (globals, functions) =
     let n1' = expr builder n1  (* 8 bits of n1 (pitch) *)
     and n2' = expr builder n2  (* 8 bits of n2 (velocity) *)
     and n3' = expr builder n3  (* 16 bits of n3 (duration) *)
-    and n1shift' = expr builder (Int, SIntLit 16777216)  (* shift 24 bits *)
-    and n2shift' = expr builder (Int, SIntLit 65536) in  (* shift 16 bits *)
+    and n1shift' = expr builder (A.Int, SIntLit 16777216)  (* shift 24 bits *)
+    and n2shift' = expr builder (A.Int, SIntLit 65536) in  (* shift 16 bits *)
     let i1' = (L.build_mul n1' n1shift' "tmp" builder)  
     and i2' = (L.build_mul n2' n2shift' "tmp" builder) in
     let n12' = (L.build_or i1' i2' "tmp" builder) in 
@@ -159,52 +147,40 @@ let translate (globals, functions) =
     let helper ptr elem = 
 
       let obj = L.build_alloca chordp_node "c1" builder in 
-      L.dump_value obj;
 
       let one = L.const_int i32_t 1 in 
       let empty = L.const_int i32_t 0 in
       let i1 = L.build_malloc chord_node "a2" builder in
-      L.dump_value i1;
-      let istore = L.build_store i1 obj builder in
-      L.dump_value istore; 
+      ignore(L.build_store i1 obj builder);
       let i3 = L.build_load obj "a3" builder in
-      L.dump_value i3; 
 
       let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-      L.dump_value i4; 
 
-      let istore2 = L.build_store (expr builder elem) i4 builder in
-      L.dump_value istore2;
+      ignore(L.build_store (expr builder elem) i4 builder);
 
       let i5 = L.build_load obj "a5" builder in
-      L.dump_value i5;
       let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-      L.dump_value i6;
 
-      let istore3 = L.build_store ptr i6 builder in
-      L.dump_value istore3; 
+      ignore(L.build_store ptr i6 builder);
       let i7 = L.build_load obj "a7" builder in 
-      L.dump_value i7;
       i7 in (*end "helper"*)
 
     let i8 = List.fold_left helper (L.const_null chordp_node) e in
-    L.dump_value i8;
-
     i8
 
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
        | SCall ("printn", [e]) -> 
     let e' = expr builder e in 
-    let n1 = L.build_and e' (expr builder (Int, SIntLit 4294967295)) "tmp" builder in 
-    let n1' = L.build_sdiv n1 (expr builder (Int, SIntLit 16777216)) "tmp" builder in
-    let n2 = L.build_and e' (expr builder (Int, SIntLit 16777215)) "tmp" builder in 
-    let n2' = L.build_sdiv n2 (expr builder (Int, SIntLit 65536)) "tmp" builder in
-    let n3' = L.build_and e' (expr builder (Int, SIntLit 65535)) "tmp" builder in 
+    let n1 = L.build_and e' (expr builder (A.Int, SIntLit 4294967295)) "tmp" builder in 
+    let n1' = L.build_sdiv n1 (expr builder (A.Int, SIntLit 16777216)) "tmp" builder in
+    let n2 = L.build_and e' (expr builder (A.Int, SIntLit 16777215)) "tmp" builder in 
+    let n2' = L.build_sdiv n2 (expr builder (A.Int, SIntLit 65536)) "tmp" builder in
+    let n3' = L.build_and e' (expr builder (A.Int, SIntLit 65535)) "tmp" builder in 
     L.build_call printn_func[| note_format_str; n1'; n2'; n3' |] "printn" builder;
        | SCall ("play", [e]) ->
     let cmd = ("node midigen.js" ^ (string_of_sexpr e)) in
     let result_code = Sys.command cmd in
-    L.build_call printf_func [| int_format_str; (expr builder (Int, SIntLit result_code)) |] "printf" builder;
+    L.build_call printf_func [| int_format_str; (expr builder (A.Int, SIntLit result_code)) |] "printf" builder;
     (*in (match result_code with 
           0 -> 
             print_string ("===== MIDI File Generated =====\n");
@@ -214,14 +190,11 @@ let translate (globals, functions) =
 
     let e' = expr builder e in 
 
-    L.dump_value e';
-    L.dump_value e';
-    L.dump_value e';
-    L.dump_value e';
     L.build_call printc_func [| e' |] "printc" builder 
 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1
+    and (t2, _) = e2
     and e1' = expr builder e1
     and e2' = expr builder e2 in
     if t = A.Int then (match op with 
@@ -239,7 +212,27 @@ let translate (globals, functions) =
     | A.Geq     -> L.build_icmp L.Icmp.Sge
     | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
     ) e1' e2' "tmp" builder 
-    else if t = A.Note then (match op with 
+    else if t = A.Note && t2 = A.Note then (match op with 
+    | A.Mult     -> 
+    let helper ptr elem = 
+      let obj = L.build_alloca chordp_node "c1" builder in 
+      let one = L.const_int i32_t 1 in 
+      let empty = L.const_int i32_t 0 in
+      let i1 = L.build_malloc chord_node "a2" builder in
+      ignore(L.build_store i1 obj builder);
+      let i3 = L.build_load obj "a3" builder in
+      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+      ignore(L.build_store (expr builder elem) i4 builder);
+      let i5 = L.build_load obj "a5" builder in
+      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+      ignore(L.build_store ptr i6 builder);
+      let i7 = L.build_load obj "a7" builder in 
+      i7 in (*end "helper"*)
+    let i8 = List.fold_left helper (L.const_null chordp_node) [e2 ; e1] in i8
+    | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
+    | _         -> raise (Failure("bad"))
+    )
+    (*else if t = A.Note & t2 = A.Chord then (match op with 
     | A.Mult     -> 
     let helper ptr elem = 
       let obj = L.build_alloca chordp_node "c1" builder in 
@@ -255,9 +248,11 @@ let translate (globals, functions) =
       let istore3 = L.build_store ptr i6 builder in
       let i7 = L.build_load obj "a7" builder in 
       i7 in (*end "helper"*)
-    let i8 = List.fold_left helper (L.const_null chordp_node) [e2 ; e1] in i8
+    let i8 = List.fold_left helper (L.const_null chordp_node) [e1] in 
+    let i9 = List.fold_left helper i8 [e2] in i9
+    | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
     | _         -> raise (Failure("bad"))
-    )
+    )*)
     else (match op with
     | A.Add     -> L.build_add
     | A.Sub     -> L.build_sub
@@ -289,7 +284,7 @@ let translate (globals, functions) =
     let rec stmt builder = function
   SBlock sl -> List.fold_left stmt builder sl
       | SExpr e -> let _ = expr builder e in builder 
-      | SReturn e -> let _ = L.dump_module the_module; match fdecl.styp with
+      | SReturn e -> let _ = match fdecl.styp with
                               A.Int -> L.build_ret (expr builder e) builder 
                             | _ -> to_imp (A.string_of_typ fdecl.styp)
                      in builder

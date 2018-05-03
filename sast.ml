@@ -54,7 +54,7 @@ let rec string_of_sexpr (t, e) =
   | SNoexpr -> ""
   | SNoteLit(e1,e2,e3)-> "(" ^ string_of_sexpr e1 ^ "," ^ string_of_sexpr e2 ^ " | " ^ string_of_sexpr e3 ^ ")"
   | SChordLit(e1)-> "[" ^ String.concat "" (List.map string_of_sexpr e1) ^ "]"
-  | SSeqLit(e1)->"Seq" (* ^ string_of_sexpr e1 *) (*fix*)
+  | SSeqLit(e1)-> "$(" ^ String.concat "" (List.map string_of_sexpr e1) ^ ")"
   | SStringLit(e1)->e1 
           ) ^ ")"
 

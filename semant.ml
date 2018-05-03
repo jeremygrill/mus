@@ -18,8 +18,8 @@ let check (globals, functions) =
      of another, previously checked binding *)
   let check_binds (kind : string) (to_check : bind list) = 
     let check_it checked binding = 
-      let void_err = "illegal void " ^ kind ^ " " ^ snd binding
-      and dup_err = "duplicate " ^ kind ^ " " ^ snd binding
+      (*let void_err = "illegal void " ^ kind ^ " " ^ snd binding*)
+      let dup_err = "duplicate " ^ kind ^ " " ^ snd binding
       in match binding with
         (* No void bindings *)
         (_, n1) -> match checked with
@@ -101,7 +101,7 @@ let check (globals, functions) =
         IntLit l -> (Int, SIntLit l)
       | StringLit l -> (String, SStringLit l)
       | Id s       -> (type_of_identifier s, SId s)
-      | NoteLit (n1, n2, n3) as ex -> 
+      | NoteLit (n1, n2, n3) -> 
           let (t1, n1') = expr n1  
           and (t2, n2') = expr n2 
           and (t3, n3') = expr n3 
@@ -133,9 +133,8 @@ let check (globals, functions) =
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
-      | ChordLit(args) as chord -> 
-          let (*lt = type_of_identifier var
-          and*) args' = List.map expr args in
+      | ChordLit(args) -> 
+          let args' = List.map expr args in
           (Chord, SChordLit(args'))
       | Call(fname, args) as call -> 
           let fd = find_func fname in
