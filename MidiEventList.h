@@ -22,7 +22,7 @@ class MidiEventList {
 	public:
 		                 MidiEventList      (void);
 		                 MidiEventList      (const MidiEventList& other);
-		                 MidiEventList      (MidiEventList&& other);
+		                 MidiEventList      (MidiEventList& other);
 
 		                ~MidiEventList      ();
 

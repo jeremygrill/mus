@@ -46,7 +46,6 @@ rule tokenize = parse
 | "else" { ELSE }
 | "while" { WHILE }
 | "for" { FOR }
-| "play" { PLAY }
 | "true" { TRUE }
 | "false" { FALSE }
 | digits as lit { INTLIT(int_of_string lit) }

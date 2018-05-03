@@ -6,7 +6,7 @@ using namespace std;
 using namespace smf;
 
 
-int play(long musSeq)
+int play(int musSeq)
 {
    MidiFile outputfile;        // create an empty MIDI file with one track
    outputfile.absoluteTicks();  // time information stored as absolute time
@@ -66,7 +66,7 @@ int play(long musSeq)
    outputfile.write("themidi.mid"); // write Standard MIDI File twinkle.mid
    return 0;
 }
-int main(int argc, char** argv)
+/*int main(int argc, char** argv)
 {
 	int var = 0b00111100000000000000000000000000;
 
@@ -75,4 +75,4 @@ int main(int argc, char** argv)
 
 	return 0;
 
-}
+}*/
