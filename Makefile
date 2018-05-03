@@ -26,12 +26,12 @@ tests: all
 hello: all
 	./toplevel.native tests/hello.mus > tests/hello.ll
 	llc tests/hello.ll > tests/hello.s
-	cc tests/hello.s printc.o
+	cc tests/hello.s printc.o play.o
 	./a.out > tests/hello.out
 	cat tests/hello.out
 	
 .PHONY : all
-all : toplevel.native printc.o
+all : toplevel.native printc.o play.o
 
 .PHONY : toplevel.native
 toplevel.native :
@@ -55,7 +55,7 @@ clean :
 OBJS = ast.cmx sast.cmx codegen.cmx parser.cmx scanner.cmx semant.cmx toplevel.cmx
 
 toplevel : $(OBJS)
-	cc -o -DBUILD_TEST printc.c
+	cc -o -DBUILD_TEST printc.c play.cpp
 	ocamlfind ocamlopt -linkpkg -package llvm -package llvm.analysis $(OBJS) -o toplevel
 
 scanner.ml : scanner.mll
