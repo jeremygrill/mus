@@ -17,7 +17,7 @@
 #include "MidiEventList.h"
 
 #include <vector>
-#include <string>
+#include <string.h>
 #include <istream>
 #include <fstream>
 

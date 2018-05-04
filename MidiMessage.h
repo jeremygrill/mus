@@ -15,7 +15,7 @@
 #define _MIDIMESSAGE_H_INCLUDED
 
 #include <vector>
-#include <string>
+#include <string.h>
 
 namespace smf {
 

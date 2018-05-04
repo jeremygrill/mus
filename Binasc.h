@@ -13,10 +13,10 @@
 #ifndef _BINASC_H_INCLUDED
 #define _BINASC_H_INCLUDED
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstdlib>
+#include <iostream.h>
+#include <fstream.h>
+#include <string.h>
+#include <cstdlib.h>
 #include <stdlib.h> /* needed for MinGW */
 
 namespace smf {
