@@ -98,7 +98,6 @@ expr:
 | expr MINUS expr       { Binop($1, Sub, $3) }
 | expr TIMES expr       { Binop($1, Mult, $3) }
 | expr DIVIDE expr      { Binop($1, Div, $3) }
-| expr COMMA expr       { Binop($1, Comma, $3) }
 | ID ASSIGN expr        { Asn($1, $3) }
 | ID LPAREN args_opt RPAREN { Call($1, $3)  }
 | expr NEQUALS expr     { Binop($1, Neq, $3) }
@@ -127,4 +126,4 @@ args_opt:
 
 args_list:
     expr                    { [$1] }
-  | args_list expr { $2 :: $1 }
+  | args_list COMMA expr { $3 :: $1 }
