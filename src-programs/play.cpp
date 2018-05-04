@@ -66,8 +66,7 @@ int play(int musSeq)
    outputfile.write("themidi.mid"); // write Standard MIDI File twinkle.mid
    return 0;
 }
-/*int main(int argc, char** argv)
-{
+/*int main(int argc, char** argv){
 	int var = 0b00111100000000000000000000000000;
 
 	std::cout << var << "\n";

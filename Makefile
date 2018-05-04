@@ -26,16 +26,21 @@ tests: all
 hello: all
 	./toplevel.native tests/hello.mus > tests/hello.ll
 	llc tests/hello.ll > tests/hello.s
-	g++ tests/hello.s printc.o play.o MidiFile.o MidiEventList.o Binasc.o Options.o MidiEvent.o MidiMessage.o
+	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMessage.cpp Binasc.cpp
+	g++ -c -std=c++11 play.cpp
+	cc MidiFile.o MidiEvent.o MidiEventList.o MidiMessage.o Binasc.o play.o tests/hello.s printc.o
 	./a.out > tests/hello.out
 	cat tests/hello.out
 
 .PHONY : play
 play: 
-	$(MAKE) -f midifile/Makefile.programs
+	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMessage.cpp Binasc.cpp
+	g++ -c -std=c++11 play.cpp
+	g++ MidiFile.o MidiEvent.o MidiEventList.o MidiMessage.o Binasc.o play.o
+	#$(MAKE) -f Makefile.programs play
 	
 .PHONY : all
-all : toplevel.native printc.o play.o
+all : toplevel.native printc.o
 
 .PHONY : toplevel.native
 toplevel.native :

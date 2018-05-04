@@ -1,3 +1,5 @@
+
+
 #include "MidiFile.h"
 #include <iostream>
 #include <cmath>
@@ -5,9 +7,9 @@
 using namespace std;
 using namespace smf;
 
+///////////////////////////////////////////////////////////////////////////
 
-int play(int musSeq)
-{
+int main(int argc, char** argv) {
    MidiFile outputfile;        // create an empty MIDI file with one track
    outputfile.absoluteTicks();  // time information stored as absolute time
                                // (will be coverted to delta time when written)
@@ -18,9 +20,9 @@ int play(int musSeq)
    outputfile.setTicksPerQuarterNote(tpq);
 
 
-   int x = musSeq;
+   int x = 0b00111100000000000000000000000000;
    x = x & 0b11111111000000000000000000000000;    
-   double exponent = pow(2.0, 24);	
+   double exponent = pow(2.0, 24);  
    x = x / exponent;
 
    // data to write to MIDI file: (60 = middle C)
@@ -47,32 +49,7 @@ int play(int musSeq)
       outputfile.addEvent(1, actiontime, midievent);
       i++;
    }
-/*
-   // store a base line in track 2
-   i=0;
-   actiontime = 0;          // reset time for beginning of file
-   midievent[2] = 64;
-   while (bass[i] >= 0) {
-      midievent[0] = 0x90;
-      midievent[1] = bass[i];
-      outputfile.addEvent(2, actiontime, midievent);
-      actiontime += tpq * brhythm[i];
-      midievent[0] = 0x80;
-      outputfile.addEvent(2, actiontime, midievent);
-      i++;
-   }
-*/
    outputfile.sortTracks();         // make sure data is in correct order
    outputfile.write("themidi.mid"); // write Standard MIDI File twinkle.mid
    return 0;
 }
-/*int main(int argc, char** argv)
-{
-	int var = 0b00111100000000000000000000000000;
-
-	std::cout << var << "\n";
-	play(var);
-
-	return 0;
-
-}*/
