@@ -57,7 +57,7 @@ int playn(int musSeq)
    }
 
    //outputfile.sortTracks();         // make sure data is in correct order
-   outputfile.write("themidi.mus"); // write Standard MIDI File twinkle.mid
+   outputfile.write("themidi.mid"); // write Standard MIDI File twinkle.mid
    return 0;
 }
 
