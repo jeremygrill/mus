@@ -67,8 +67,8 @@ let translate (globals, functions) =
   let printc_t = L.function_type i32_t [| L.pointer_type chord_node |] in
   let printc_func = L.declare_function "printc" printc_t the_module in
 
-  let play_t = L.function_type i32_t [| i32_t |] in 
-  let play_func = L.declare_function "play" play_t the_module in
+  let play_t = L.function_type i32_t [| i32_t ; i32_t |] in 
+  let play_func = L.declare_function "playn" play_t the_module in
 
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
@@ -173,8 +173,10 @@ let translate (globals, functions) =
     let n2' = L.build_sdiv n2 (expr builder (A.Int, SIntLit 65536)) "tmp" builder in
     let n3' = L.build_and e' (expr builder (A.Int, SIntLit 65535)) "tmp" builder in 
     L.build_call printn_func[| note_format_str; n1'; n2'; n3' |] "printn" builder;
-       | SCall ("play", [e]) -> let e' = expr builder e in 
-    L.build_call play_func [| e' |] "play" builder 
+       | SCall ("playn", [e, i]) -> 
+    let e' = expr builder e in 
+    let i' = expr builder i in 
+    L.build_call play_func [| e' ; i' |] "playn" builder 
     (*let cmd = ("node midigen.js" ^ (string_of_sexpr e)) in
     let result_code = Sys.command cmd in
     L.build_call printf_func [| int_format_str; (expr builder (A.Int, SIntLit result_code)) |] "printf" builder;
