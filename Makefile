@@ -29,8 +29,8 @@ hello: all
 	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMessage.cpp Binasc.cpp Options.cpp 
 	g++ -c -std=c++11 play.cpp
 	g++ -stdlib=libc++ MidiFile.o MidiEvent.o MidiEventList.o MidiMessage.o Binasc.o play.o tests/hello.s printc.o
-	#./a.out > tests/hello.out
-	#cat tests/hello.out
+	./a.out > tests/hello.out
+	cat tests/hello.out
 
 .PHONY : play
 play: 
