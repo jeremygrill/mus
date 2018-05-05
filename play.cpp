@@ -6,10 +6,10 @@ using namespace std;
 using namespace smf;
 
 extern "C" {
-   int play(int musSeq, int numberOfMidi);
+   int playn(int musSeq);
 }
 
-int play(int musSeq, int numberOfMidi)
+int playn(int musSeq)
 {
    MidiFile outputfile;        // create an empty MIDI file with one track
    outputfile.absoluteTicks();  // time information stored as absolute time
@@ -48,7 +48,7 @@ int play(int musSeq, int numberOfMidi)
       actiontime += tpq * mrhythm[i];
       midievent[0] = 0x80;     // store a note on command (MIDI channel 1)
       outputfile.addEvent(1, actiontime, midievent);
-      i++
+      i++;
    }
 /*
    // store a base line in track 2
@@ -66,8 +66,7 @@ int play(int musSeq, int numberOfMidi)
    }
 */
    //outputfile.sortTracks();         // make sure data is in correct order
-   std::string the_number = std::to_string(numberOfMidi);
-   outputfile.write("themidi" + numberOfMidi + ".mus"); // write Standard MIDI File twinkle.mid
+   outputfile.write("themidi.mus"); // write Standard MIDI File twinkle.mid
    return 0;
 }
 /*int main(int argc, char** argv)

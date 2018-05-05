@@ -47,7 +47,7 @@ let check (globals, functions) =
                                ("printb", Bool);
                                ("printn", Note);
                                ("printc", Chord);
-                               ("play", Note) ]
+                               ("playn", Note) ]
   in
 
   (* Add function name to symbol table *)
