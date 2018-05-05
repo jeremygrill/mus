@@ -5,6 +5,9 @@
 using namespace std;
 using namespace smf;
 
+extern "C" {
+   int play(int musSeq);
+}
 
 int play(int musSeq)
 {
@@ -62,7 +65,7 @@ int play(int musSeq)
       i++;
    }
 */
-   outputfile.sortTracks();         // make sure data is in correct order
+   //outputfile.sortTracks();         // make sure data is in correct order
    outputfile.write("themidi.mid"); // write Standard MIDI File twinkle.mid
    return 0;
 }

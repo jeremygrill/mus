@@ -14,7 +14,7 @@ Int main()
 	a = (11,1|11);
 	suh = (3,3|3);
 	n = (2,22|2);
-	c = [a n suh];
+	c = [a, n, suh];
 	d = a * n;
 	//c = [a n];
 	//print(88);

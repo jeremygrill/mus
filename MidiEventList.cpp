@@ -513,7 +513,7 @@ MidiEventList& MidiEventList::operator=(MidiEventList& other) {
 //
 
 void MidiEventList::sort(void) {
-	qsort(data(), getEventCount(), sizeof(MidiEvent*), eventcompare);
+	//qsort(data(), getEventCount(), sizeof(MidiEvent*), eventcompare);
 }
 
 

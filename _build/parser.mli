@@ -1,0 +1,54 @@
+type token =
+  | LT
+  | GT
+  | LEQ
+  | GEQ
+  | NEG
+  | LAND
+  | LOR
+  | LBRACE
+  | RBRACE
+  | LINE
+  | LSQUARE
+  | RSQUARE
+  | LSEQ
+  | QUOTE
+  | TRUE
+  | FALSE
+  | PLUS
+  | MINUS
+  | TIMES
+  | DIVIDE
+  | INCR
+  | DEC
+  | EOF
+  | COMMA
+  | ASSIGN
+  | LPAREN
+  | RPAREN
+  | LBRACKET
+  | RBRACKET
+  | INT
+  | BOOL
+  | NOTE
+  | STRING
+  | CHORD
+  | SEQ
+  | RETURN
+  | IF
+  | INTLIT of (int)
+  | BOOLLIT of (bool)
+  | STRINGLIT of (string)
+  | ID of (string)
+  | NOELSE
+  | ELSE
+  | WHILE
+  | FUNC
+  | FOR
+  | PLAY
+  | EQUALS
+  | NEQUALS
+  | SEMI
+
+val program :
+  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Ast.program
