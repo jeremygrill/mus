@@ -79,21 +79,38 @@ int playc(struct chord_node* list)
    outputfile.setTicksPerQuarterNote(tpq);
 
 
-   struct chord_node * tmp = list;
    //while(tmp != NULL) {
-      int musSeq = tmp->note;
       //tmp = tmp -> next_note;
    //}
 
-   int x = musSeq;
-   x = x & 0b11111111000000000000000000000000;    
-   double exponent = pow(2.0, 24);  
-   x = x / exponent;
+   chord_node * tmp = list;
+   chord_node * tmp2 = list;
 
-   // data to write to MIDI file: (60 = middle C)
-   // C5 C  G G A A G-  F F  E  E  D D C-
-   int melody[50]  = {x,-1};
-   int mrhythm[50] = { 1,-1};
+/*
+   int count = 0;
+   while(tmp2){
+      tmp2 ++;
+      count ++;
+   }
+   */
+
+   int melody[150];
+   int mrhythm[150];
+   int j = 0;
+
+   while(tmp){
+      int x = tmp->note;
+      x = x & 0b11111111000000000000000000000000;    
+      double exponent = pow(2.0, 24);  
+      x = x / exponent;
+      melody[j] = x;
+      mrhythm[j] = 1;
+      tmp = tmp->next_note;
+      j++;
+}
+
+   melody[j+1] = -1;
+   mrhythm[j+1] = -1;
 
    // C3 C4 E C F C E C D B3 C4 A3 F G C-
    int bass[50] =   {48,60,64,60,65,60,64,60,62,59,60,57,53,55,48,-1};
@@ -115,7 +132,7 @@ int playc(struct chord_node* list)
       i++;
    }
 
-   //outputfile.sortTracks();         // make sure data is in correct order
+   outputfile.sortTracks();         // make sure data is in correct order
    outputfile.write("themidi2.mid"); // write Standard MIDI File 
    return 0;
 }
