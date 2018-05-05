@@ -57,7 +57,7 @@ int playn(int musSeq)
    }
 
    //outputfile.sortTracks();         // make sure data is in correct order
-   outputfile.write("themidi.mus"); // write Standard MIDI File twinkle.mid
+   outputfile.write("themidi.mid"); // write Standard MIDI File twinkle.mid
    return 0;
 }
 
@@ -104,10 +104,13 @@ int playc(struct chord_node* list)
       double exponent = pow(2.0, 24);  
       x = x / exponent;
       melody[j] = x;
-      mrhythm[j] = 1;
+      mrhythm[j] = 1;       
       tmp = tmp->next_note;
       j++;
 }
+
+//0b1111111111111111   duration
+//0b111111110000000000000000  velocity, bitshift right 16 times
 
    melody[j+1] = -1;
    mrhythm[j+1] = -1;
@@ -126,7 +129,7 @@ int playc(struct chord_node* list)
       midievent[1] = melody[i];
       //std::cout << midievent[1] << "\n";
       outputfile.addEvent(1, actiontime, midievent);
-      actiontime += tpq * mrhythm[i];
+      //actiontime += tpq * mrhythm[i];
       midievent[0] = 0x80;     // store a note on command (MIDI channel 1)
       outputfile.addEvent(1, actiontime, midievent);
       i++;
