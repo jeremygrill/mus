@@ -70,6 +70,9 @@ let translate (globals, functions) =
   let playn_t = L.function_type i32_t [| i32_t |] in 
   let playn_func = L.declare_function "playn" playn_t the_module in
 
+  let playc_t = L.function_type i32_t [| L.pointer_type chord_node |] in 
+  let playc_func = L.declare_function "playc" playc_t the_module in
+
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
@@ -175,15 +178,10 @@ let translate (globals, functions) =
     L.build_call printn_func[| note_format_str; n1'; n2'; n3' |] "printn" builder;
        | SCall ("playn", [e]) -> 
     let e' = expr builder e in 
-    L.build_call playn_func [| e' |] "playn" builder 
-    (*let cmd = ("node midigen.js" ^ (string_of_sexpr e)) in
-    let result_code = Sys.command cmd in
-    L.build_call printf_func [| int_format_str; (expr builder (A.Int, SIntLit result_code)) |] "printf" builder;
-    (*in (match result_code with 
-          0 -> 
-            print_string ("===== MIDI File Generated =====\n");
-        | _ as error_code -> raise (Failure ("Error!\n"))
-        )*)*)
+    L.build_call playn_func [| e' |] "playn" builder        
+      | SCall ("playc", [e]) -> 
+    let e' = expr builder e in 
+    L.build_call playc_func [| e' |] "playc" builder 
        | SCall ("printc", [e]) -> 
 
     let e' = expr builder e in 

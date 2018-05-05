@@ -23,6 +23,7 @@ Int main()
 	printc(c);
 	printc(d);
 	playn(a);
+	playc(c);
 	//c;
 	//d;
 	return 0;
