@@ -8,6 +8,7 @@ Int main()
 	Note suh;
 	Chord c;
 	Chord d;
+	Seq s;
 	//4 + 2;
 	//i = 1; 
 	//b = true;
@@ -16,12 +17,14 @@ Int main()
 	n = (2,22|2);
 	c = [a, n, suh];
 	d = a * n;
+	s = $(c, d);
 	//c = [a n];
 	//print(88);
 	//printn(n);
 	//printc(hello);
 	printc(c);
 	printc(d);
+	prints(s);
 	playn(a);
 	playc(c);
 	//c;

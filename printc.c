@@ -8,6 +8,11 @@ struct chord_node{
 	struct chord_node* next_note;
 };
 
+struct seq_node{
+	struct chord_node* chord;
+	struct seq_node* next_chord;
+};
+
 int printnote(int note){
 	int n1, n2, n3;
 	n1 = (note & 4294967295)/16777216;
@@ -28,5 +33,31 @@ int printc(struct chord_node* list){
 	}
 
 	printf("]\n");
+	return 0;
+}
+
+int printchord(struct chord_node* list){
+	printf("[");
+
+	struct chord_node * tmp = list;
+	while(tmp != NULL) {
+		printnote(tmp->note);
+		tmp = tmp -> next_note;
+	}
+
+	printf("]");
+	return 0;
+}
+
+int prints(struct seq_node* list){
+	printf("$(");
+
+	struct seq_node * tmp = list;
+	while(tmp != NULL) {
+		printchord(tmp->chord);
+		tmp = tmp -> next_chord;
+	}
+
+	printf(")\n");
 	return 0;
 }

@@ -35,6 +35,10 @@ let translate (globals, functions) =
   let chord_node  = L.named_struct_type context "chord_node" in
   let chordp_node = L.pointer_type chord_node in
   L.struct_set_body chord_node [| i32_t; chordp_node; |] false; 
+  let seq_node    = L.named_struct_type context "seq_node" in
+  let seqp_node   = L.pointer_type seq_node in
+  L.struct_set_body seq_node [| chordp_node; seqp_node; |] false; 
+
 
 
   (* Convert MicroC types to LLVM types *)
@@ -43,6 +47,7 @@ let translate (globals, functions) =
     | A.Note  -> i32_t
     | A.Bool  -> i1_t
     | A.Chord -> chordp_node
+    | A.Seq   -> seqp_node
     | _       -> raise(Failure("sorry"))
 
     (*| t -> raise (Failure ("Type " ^ A.string_of_typ t ^ " not implemented yet"))*)
@@ -66,6 +71,10 @@ let translate (globals, functions) =
 
   let printc_t = L.function_type i32_t [| L.pointer_type chord_node |] in
   let printc_func = L.declare_function "printc" printc_t the_module in
+
+  let prints_t = L.function_type i32_t [| L.pointer_type seq_node |] in
+  let prints_func = L.declare_function "prints" prints_t the_module in
+
 
   let playn_t = L.function_type i32_t [| i32_t |] in 
   let playn_func = L.declare_function "playn" playn_t the_module in
@@ -166,6 +175,31 @@ let translate (globals, functions) =
 
     let i8 = List.fold_left helper (L.const_null chordp_node) e in
     i8
+      | SSeqLit (e) -> 
+    
+    let helper ptr elem = 
+
+      let obj = L.build_alloca seqp_node "c1" builder in 
+
+      let one = L.const_int i32_t 1 in 
+      let empty = L.const_int i32_t 0 in
+      let i1 = L.build_malloc seq_node "a2" builder in
+      ignore(L.build_store i1 obj builder);
+      let i3 = L.build_load obj "a3" builder in
+
+      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+
+      ignore(L.build_store (expr builder elem) i4 builder);
+
+      let i5 = L.build_load obj "a5" builder in
+      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+
+      ignore(L.build_store ptr i6 builder);
+      let i7 = L.build_load obj "a7" builder in 
+      i7 in (*end "helper"*)
+
+    let i8 = List.fold_left helper (L.const_null seqp_node) e in
+    i8
 
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
        | SCall ("printn", [e]) -> 
@@ -187,6 +221,11 @@ let translate (globals, functions) =
     let e' = expr builder e in 
 
     L.build_call printc_func [| e' |] "printc" builder 
+       | SCall ("prints", [e]) -> 
+
+    let e' = expr builder e in 
+
+    L.build_call prints_func [| e' |] "prints" builder 
 
        | SBinop (e1, op, e2) ->
     let (t, _) = e1

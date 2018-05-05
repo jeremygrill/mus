@@ -47,6 +47,7 @@ let check (globals, functions) =
                                ("printb", Bool);
                                ("printn", Note);
                                ("printc", Chord);
+                               ("prints", Seq);
                                ("playn", Note);
                                ("playc", Chord) ]
   in
@@ -137,7 +138,10 @@ let check (globals, functions) =
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
       | ChordLit(args) -> 
           let args' = List.map expr args in
-          (Chord, SChordLit(args'))
+          (Chord, SChordLit(args'))      
+      | SeqLit(args) -> 
+          let args' = List.map expr args in
+          (Seq, SSeqLit(args'))
       | Call(fname, args) as call -> 
           let fd = find_func fname in
           let param_length = List.length fd.formals in
