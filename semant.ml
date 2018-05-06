@@ -128,6 +128,12 @@ let check (globals, functions) =
           | Mult when t1 = Note && t2 = Note               -> Chord
           | Mult when t1 = Note && t2 = Chord              -> Chord
           | Mult when t1 = Chord && t2 = Note              -> Chord
+          | Mult when t1 = Chord && t2 = Chord             -> Chord
+          | Add when t1 = Note && t2 = Note                -> Seq
+          | Add when t1 = Note && t2 = Chord               -> Seq
+          | Add when t1 = Chord && t2 = Note               -> Seq
+          | Add when t1 = Chord && t2 = Chord              -> Seq
+
           | Eq | Neq               when same               -> Bool
           | Less | Leq | Greater | Geq
                        when same && (t1 = Int)             -> Bool
