@@ -13,8 +13,8 @@ Int main()
 	//i = 1; 
 	//b = true;
 	a = (60,1|11);
-	suh = (3,3|3);
-	n = (2,22|2);
+	suh = (64,3|3);
+	n = (67,22|2);
 	c = [a, n, suh];
 	d = a * n;
 	s = $(c, d);
@@ -25,8 +25,9 @@ Int main()
 	printc(c);
 	printc(d);
 	prints(s);
-	playn(a);
-	playc(c);
+	//playn(a);
+	//playc(c);
+	plays(s);
 	//c;
 	//d;
 	return 0;

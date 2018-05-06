@@ -82,6 +82,9 @@ let translate (globals, functions) =
   let playc_t = L.function_type i32_t [| L.pointer_type chord_node |] in 
   let playc_func = L.declare_function "playc" playc_t the_module in
 
+  let plays_t = L.function_type i32_t [| L.pointer_type seq_node |] in
+  let plays_func = L.declare_function "plays" plays_t the_module in
+
 
   let to_imp str = raise (Failure ("Not yet implemented: " ^ str)) in
 
@@ -215,7 +218,10 @@ let translate (globals, functions) =
     L.build_call playn_func [| e' |] "playn" builder        
       | SCall ("playc", [e]) -> 
     let e' = expr builder e in 
-    L.build_call playc_func [| e' |] "playc" builder 
+    L.build_call playc_func [| e' |] "playc" builder
+      | SCall ("plays", [e]) ->
+    let e' = expr builder e in 
+    L.build_call plays_func [| e' |] "plays" builder
        | SCall ("printc", [e]) -> 
 
     let e' = expr builder e in 
