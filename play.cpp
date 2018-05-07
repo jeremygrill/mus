@@ -195,7 +195,7 @@ int plays(struct seq_node* list)
    int counter = 1;
    while(!thestack.empty())
    {
-      std::cout << "starting chord " << counter << " \n \n";
+      //std::cout << "starting chord " << counter << " \n \n";
       tmp = thestack.top();
       thestack.pop();
       
@@ -210,7 +210,7 @@ int plays(struct seq_node* list)
           pitch = pitch & 0b11111111000000000000000000000000;    
           double exponent = pow(2.0, 24);  
           pitch = pitch / exponent;
-          std::cout << "pitch: " << pitch << "\n";
+          //std::cout << "pitch: " << pitch << "\n";
 
           int duration = tmp->note;
           //std::cout << "init_duration: " << duration << "\n";
@@ -236,21 +236,21 @@ int plays(struct seq_node* list)
       int q = 0;
       int longest_duration = 0;
       while(mrhythm[q] >= 0){
-         std::cout << q << "\n";
-         std::cout << "rhythm: " << mrhythm[q] << "\n";
+         //std::cout << q << "\n";
+         //std::cout << "rhythm: " << mrhythm[q] << "\n";
          if(mrhythm[q] > longest_duration){
             longest_duration = mrhythm[q];
 
          }
          q++;
       }
-      std::cout << "longest duration: " << longest_duration << "\n";
+      //std::cout << "longest duration: " << longest_duration << "\n";
       
 
       // store a melody line in track 1 (track 0 left empty for conductor info)
       int i=0;
       int actiontime = position;     // temporary storage for MIDI event time
-      std::cout << "actiontime: " << actiontime << "\n";
+      //std::cout << "actiontime: " << actiontime << "\n";
      // int actiontime = longest_duration;
       //midievent[2] = velocity;       // store attack/release velocity for note command
   
@@ -259,7 +259,7 @@ int plays(struct seq_node* list)
          midievent[0] = 0x90;
          midievent[1] = melody[i];
          midievent[2] = attack[i];
-         std::cout << "turning note " << i << " on\n";
+         //std::cout << "turning note " << i << " on\n";
          outputfile.addEvent(1, actiontime, midievent);
          
          
@@ -276,7 +276,7 @@ int plays(struct seq_node* list)
       while (melody[i] >= 0){
          midievent[0] = 0x80;
          midievent[1] = melody[i];
-         std::cout << "turning note " << i << " off\n";
+         //std::cout << "turning note " << i << " off\n";
          outputfile.addEvent(1, actiontime, midievent);
          i++;
 
@@ -289,7 +289,7 @@ int plays(struct seq_node* list)
       //outputfile.addEvent(1, actiontime, midievent);
       
       position += tpq * longest_duration; //DON'T increment by actiontime here.
-      std::cout << "position: " << position << "\n";
+      //std::cout << "position: " << position << "\n";
       //stmp = stmp->next_chord;
       counter ++;
    }
