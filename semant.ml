@@ -133,6 +133,8 @@ let check (globals, functions) =
           | Add when t1 = Note && t2 = Chord               -> Seq
           | Add when t1 = Chord && t2 = Note               -> Seq
           | Add when t1 = Chord && t2 = Chord              -> Seq
+          | Add when t1 = Seq && t2 = Chord                -> Seq
+
 
           | Eq | Neq               when same               -> Bool
           | Less | Leq | Greater | Geq

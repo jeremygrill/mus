@@ -180,7 +180,7 @@ let translate (globals, functions) =
     i8
       | SSeqLit (e) -> 
     
-    let helper elem ptr = 
+    let helper ptr elem = 
 
       let obj = L.build_alloca seqp_node "c1" builder in 
 
@@ -201,7 +201,7 @@ let translate (globals, functions) =
       let i7 = L.build_load obj "a7" builder in 
       i7 in (*end "helper"*)
 
-    let i8 = List.fold_right helper e (L.const_null seqp_node) in
+    let i8 = List.fold_left helper (L.const_null seqp_node) e in
     i8
 
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
@@ -279,12 +279,15 @@ let translate (globals, functions) =
     | A.Leq     -> L.build_icmp L.Icmp.Sle
     | A.Greater -> L.build_icmp L.Icmp.Sgt
     | A.Geq     -> L.build_icmp L.Icmp.Sge
-    | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
+    | A.Comma   -> raise (Failure ("bad Comma"))
     ) e1' e2' "tmp" builder 
     else if t = A.Note && t2 = A.Note then (match op with 
     | A.Mult     -> 
-    let i8 = List.fold_left helper1 (L.const_null chordp_node) [e2 ; e1] in i8
-    | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
+    let i8 = List.fold_left helper1 (L.const_null chordp_node) [e1 ; e2] in i8
+    | A.Add     ->    raise (Failure("bad"))
+    (*let i8 = List.fold_left helper1 (L.const_null chordp_node) [e1] 
+    and i9 = List.fold_left helper1 (L.const_null chordp_node) [e2] in
+    List.fold_left helper2 (L.const_null seqp_node) [(expr builder i8); (expr builder i9)]*)
     | _         -> raise (Failure("bad"))
     )
 
@@ -320,7 +323,15 @@ let translate (globals, functions) =
     i8
     
     | A.Add     -> 
-    let i8 = List.fold_left helper2 (L.const_null seqp_node) [e2 ; e1] in
+    let i8 = List.fold_left helper2 (L.const_null seqp_node) [e1 ; e2] in
+    i8    
+    | _         -> raise (Failure("bad"))
+    )
+
+    else if t = A.Seq && t2 = A.Chord then (match op with 
+    | A.Add     -> 
+    let e1' = expr builder e1 in
+    let i8 = helper2 e1' e2 in
     i8    
     | _         -> raise (Failure("bad"))
     )
@@ -337,7 +348,7 @@ let translate (globals, functions) =
     | A.Leq     -> L.build_icmp L.Icmp.Sle
     | A.Greater -> L.build_icmp L.Icmp.Sgt
     | A.Geq     -> L.build_icmp L.Icmp.Sge
-    | A.Comma   -> raise (Failure ("Not yet implemented: Comma"))
+    | A.Comma   -> raise (Failure ("bad Comma"))
     ) e1' e2' "tmp" builder
       | SAsn (s, e) -> let e' = expr builder e in
                        let _  = L.build_store e' (lookup s) builder in e'

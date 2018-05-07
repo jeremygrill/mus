@@ -9,6 +9,7 @@ Int main()
 	Note suuuh;
 	Chord c;
 	Chord d;
+	Chord ca;
 	Chord xx;
 	Seq s;
 	Seq nextseq;
@@ -21,9 +22,10 @@ Int main()
 	suuuh = (62,64|2);
 	c = [a, n, suh];
 	d = suuuh * c;
-	xx = c * suuuh;
+	xx = a * n;
 	s = c + d;
 	nextseq = $(c, d);
+	nextseq = nextseq + [a];
 	//c = [a n];
 	//print(88);
 	//printn(n);
