@@ -1,8 +1,11 @@
+76
 [(60,64|2)(67,64|2)(64,64|2)]
 [(60,64|2)(67,64|2)(64,64|2)(62,64|2)]
 [(60,64|2)(67,64|2)]
 $([(64,64|2)(67,64|2)(60,64|2)][(62,64|2)(64,64|2)(67,64|2)(60,64|2)])
 $([(64,64|2)(67,64|2)(60,64|2)][(62,64|2)(64,64|2)(67,64|2)(60,64|2)][(60,64|2)])
+starting chord 1 
+ 
 pitch: 62
 pitch: 64
 pitch: 67
@@ -21,8 +24,13 @@ turning note 0 on
 turning note 1 on
 turning note 2 on
 turning note 3 on
-turning notes off
+turning note 0 off
+turning note 1 off
+turning note 2 off
+turning note 3 off
 position: 240
+starting chord 2 
+ 
 pitch: 64
 pitch: 67
 pitch: 60
@@ -37,5 +45,7 @@ actiontime: 240
 turning note 0 on
 turning note 1 on
 turning note 2 on
-turning notes off
+turning note 0 off
+turning note 1 off
+turning note 2 off
 position: 720

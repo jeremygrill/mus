@@ -1,7 +1,7 @@
 Int main()
 {
-	//Int i;
-	//Int j;
+	Int i;
+	Int j;
 	//Bool b;
 	Note a;
 	Note n;
@@ -14,8 +14,9 @@ Int main()
 	Seq s;
 	Seq nextseq;
 	//4 + 2;
-	//i = 1; 
-	//b = true;
+	j = 77;
+	j = --j;
+	//b = !true;
 	a = (60,64|2);
 	suh = (64,64|2);
 	n = (67,64|2);
@@ -25,9 +26,9 @@ Int main()
 	xx = a * n;
 	s = c + d;
 	nextseq = $(c, d);
-	nextseq = nextseq + [a];
+	nextseq = [a] + nextseq;
 	//c = [a n];
-	//print(88);
+	print(j);
 	//printn(n);
 	//printc(hello);
 	printc(c);

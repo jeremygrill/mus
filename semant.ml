@@ -117,6 +117,16 @@ let check (globals, functions) =
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^ 
             string_of_typ rt ^ " in " ^ string_of_expr ex
           in (check_assign lt rt err, SAsn(var, (rt, e')))
+      | Unop(op, e) as ex -> 
+          let (t, e') = expr e in
+          let ty = match op with
+            Neg when t = Bool -> Bool
+          | Dec when t = Int -> t
+          | Incr when t = Int -> t
+          | _ -> raise (Failure ("illegal unary operator " ^ 
+                                 string_of_unop op ^ string_of_typ t ^
+                                 " in " ^ string_of_expr ex))
+          in (ty, SUnop(op, (t, e')))
       | Binop(e1, op, e2) as e -> 
           let (t1, e1') = expr e1 
           and (t2, e2') = expr e2 in
@@ -128,14 +138,9 @@ let check (globals, functions) =
           | Mult when t1 = Note && t2 = Note               -> Chord
           | Mult when t1 = Note && t2 = Chord              -> Chord
           | Mult when t1 = Chord && t2 = Note              -> Chord
-          | Mult when t1 = Chord && t2 = Chord             -> Chord
-          | Add when t1 = Note && t2 = Note                -> Seq
-          | Add when t1 = Note && t2 = Chord               -> Seq
-          | Add when t1 = Chord && t2 = Note               -> Seq
           | Add when t1 = Chord && t2 = Chord              -> Seq
           | Add when t1 = Seq && t2 = Chord                -> Seq
-
-
+          | Add when t1 = Chord && t2 = Seq                -> Seq
           | Eq | Neq               when same               -> Bool
           | Less | Leq | Greater | Geq
                        when same && (t1 = Int)             -> Bool

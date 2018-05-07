@@ -284,11 +284,7 @@ let translate (globals, functions) =
     else if t = A.Note && t2 = A.Note then (match op with 
     | A.Mult     -> 
     let i8 = List.fold_left helper1 (L.const_null chordp_node) [e1 ; e2] in i8
-    | A.Add     ->    raise (Failure("bad"))
-    (*let i8 = List.fold_left helper1 (L.const_null chordp_node) [e1] 
-    and i9 = List.fold_left helper1 (L.const_null chordp_node) [e2] in
-    List.fold_left helper2 (L.const_null seqp_node) [(expr builder i8); (expr builder i9)]*)
-    | _         -> raise (Failure("bad"))
+    | _         -> raise (Failure("This operation is not possible for Note and Note"))
     )
 
     else if t = A.Note && t2 = A.Chord then (match op with 
@@ -296,14 +292,7 @@ let translate (globals, functions) =
     let e2' = expr builder e2 in
     let i8 = helper1 e2' e1 in 
     i8
-    (*let e1' = expr builder e1 
-    and e2' = expr builder e2 in
-    let i33 = L.build_call printc_func [| e2' |] "printc" builder in
-    L.dump_value i33;
-    i33*)
-
-    | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
-    | _         -> raise (Failure("bad"))
+    | _         -> raise (Failure("This operation is not possible for Note and Chord"))
     )
 
     else if t = A.Chord && t2 = A.Note then (match op with 
@@ -311,21 +300,14 @@ let translate (globals, functions) =
     let e1' = expr builder e1 in
     let i8 = helper1 e1' e2 in 
     i8
-    
-    | A.Add     -> raise (Failure("not yet implemented"))  
-    | _         -> raise (Failure("bad"))
+    | _         -> raise (Failure("This operation is not possible for Chord and Note"))
     )
 
     else if t = A.Chord && t2 = A.Chord then (match op with 
-    | A.Mult     -> 
-    let e1' = expr builder e1 in
-    let i8 = helper1 e1' e2 in 
-    i8
-    
     | A.Add     -> 
     let i8 = List.fold_left helper2 (L.const_null seqp_node) [e1 ; e2] in
     i8    
-    | _         -> raise (Failure("bad"))
+    | _         -> raise (Failure("This operation is not possible for Chord and Chord"))
     )
 
     else if t = A.Seq && t2 = A.Chord then (match op with 
@@ -333,8 +315,17 @@ let translate (globals, functions) =
     let e1' = expr builder e1 in
     let i8 = helper2 e1' e2 in
     i8    
-    | _         -> raise (Failure("bad"))
+    | _         -> raise (Failure("This operation is not possible for Seq and Chord"))
     )
+
+    else if t = A.Chord && t2 = A.Seq then (match op with 
+    | A.Add     -> 
+    let e2' = expr builder e2 in
+    let i8 = helper2 e2' e1 in
+    i8    
+    | _         -> raise (Failure("This operation is not possible for Chord and Seq"))
+    )
+
     else (match op with
     | A.Add     -> L.build_add
     | A.Sub     -> L.build_sub
@@ -350,6 +341,14 @@ let translate (globals, functions) =
     | A.Geq     -> L.build_icmp L.Icmp.Sge
     | A.Comma   -> raise (Failure ("bad Comma"))
     ) e1' e2' "tmp" builder
+      | SUnop(op, e) ->
+    let (t, _) = e and e' = expr builder e in
+    (match op with
+    | A.Neg                  -> L.build_not e' "tmp" builder 
+    | A.Incr                 -> L.build_add e' (expr builder (A.Int, SIntLit 1)) "tmp" builder 
+    | A.Dec                  -> L.build_sub e' (expr builder (A.Int, SIntLit 1)) "tmp" builder 
+    )
+
       | SAsn (s, e) -> let e' = expr builder e in
                        let _  = L.build_store e' (lookup s) builder in e'
       (* Throw an error for any other expressions *)
