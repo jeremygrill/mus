@@ -293,6 +293,12 @@ let translate (globals, functions) =
     let e2' = expr builder e2 in
     let i8 = helper1 e2' e1 in 
     i8
+    (*let e1' = expr builder e1 
+    and e2' = expr builder e2 in
+    let i33 = L.build_call printc_func [| e2' |] "printc" builder in
+    L.dump_value i33;
+    i33*)
+
     | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
     | _         -> raise (Failure("bad"))
     )
