@@ -22,11 +22,10 @@ extern "C" {
 
 int playn(int musSeq)
 {
-   MidiFile outputfile;        // create an empty MIDI file with one track
-   outputfile.absoluteTicks();  // time information stored as absolute time
-                               // (will be coverted to delta time when written)
-   outputfile.addTrack(1);     // Add another two tracks to the MIDI file
-   vector<uchar> midievent;     // temporary storage for MIDI events
+   MidiFile outputfile;        // creates empty MIDI file
+   outputfile.absoluteTicks();  // sets type of timing for the file, don't worry about this too much
+   outputfile.addTrack(1);     // Adds a track to the file 
+   vector<uchar> midievent;     // Stores MIDI info before it's written to file (like a seq)
    midievent.resize(3);        // set the size of the array to 3 bytes
    int tpq = 120;              // default value in MIDI file is 48
    outputfile.setTicksPerQuarterNote(tpq);
@@ -37,33 +36,36 @@ int playn(int musSeq)
    double exponent = pow(2.0, 24);	
    x = x / exponent;
 
-   // data to write to MIDI file: (60 = middle C)
-   // C5 C  G G A A G-  F F  E  E  D D C-
+   // array of pitch values
    int melody[50]  = {x,-1};
+   //array of durations
    int mrhythm[50] = { 1,-1};
 
-   // C3 C4 E C F C E C D B3 C4 A3 F G C-
-   int bass[50] =   {48,60,64,60,65,60,64,60,62,59,60,57,53,55,48,-1};
-   int brhythm[50]= { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,-1};
+   /*****
+   This is where stuff actually happens as far as creating the MIDI file. 
+   The loop adds info to three places in the midievent vector: 
+      -midievent[0] holds commands that tell the MIDI file to "do" something -- turn a note on/off, bend the pitch, etc.
+      -midievent[1] holds the value that determines the pitch of a note
+      -midievent[2] holds the value that determines the velocity of a note
 
-
-   // store a melody line in track 1 (track 0 left empty for conductor info)
+   actiontime specifies the position where something happens, 0 is the start of the file
+   *****/
+   
    int i=0;
-   int actiontime = 0;      // temporary storage for MIDI event time
-   midievent[2] = 64;       // store attack/release velocity for note command
+   int actiontime = 0;       
+   midievent[2] = 64;       
    while (melody[i] >= 0) {
-      midievent[0] = 0x90;     // store a note on command (MIDI channel 1)
+      midievent[0] = 0x90;     // 0x90 is the "note on" command, it makes a note start playing
       midievent[1] = melody[i];
-      //std::cout << midievent[1] << "\n";
       outputfile.addEvent(1, actiontime, midievent);
-      actiontime += tpq * mrhythm[i];
-      midievent[0] = 0x80;     // store a note on command (MIDI channel 1)
+      actiontime += tpq * mrhythm[i]; // moves the actiontime marker to the end of the note defined by melody[i]
+      midievent[0] = 0x80;     // 0x80 is the "note off" command, it makes a note stop playing
       outputfile.addEvent(1, actiontime, midievent);
       i++;
    }
 
-   //outputfile.sortTracks();         // make sure data is in correct order
-   outputfile.write("themidi.mid"); // write Standard MIDI File twinkle.mid
+   outputfile.sortTracks();        // make sure data is in correct order, not 100% what that order is, but this is important
+   outputfile.write("themidi.mid"); // writes data to a file called "themidi.mid"
    return 0;
 }
 
@@ -177,7 +179,7 @@ int plays(struct seq_node* list)
 
    chord_node * tmp;
    //chord_node * tmp2 = tmp;
-
+   int position = 0;
 //0b1111111111111111   duration
 //0b111111110000000000000000  velocity, bitshift right 16 times
    
@@ -196,10 +198,12 @@ int plays(struct seq_node* list)
           pitch = pitch & 0b11111111000000000000000000000000;    
           double exponent = pow(2.0, 24);  
           pitch = pitch / exponent;
+          //std::cout << "pitch: " << pitch << "\n";
 
           int duration = tmp->note;
+          //std::cout << "init_duration: " << duration << "\n";
           duration = duration & 0b1111111111111111;
-          duration = duration / exponent;
+          
 
           int v = tmp->note;
           v = v & 0b111111110000000000000000;
@@ -207,6 +211,7 @@ int plays(struct seq_node* list)
           
 
           melody[j] = pitch;
+          //std::cout << "duration: " << duration << "\n";
           mrhythm[j] = duration;
           velocity = v;       
           tmp = tmp->next_note;
@@ -215,19 +220,25 @@ int plays(struct seq_node* list)
 
       melody[j+1] = -1;
       mrhythm[j+1] = -1;
-
+      
       int q = 0;
       int longest_duration = 0;
       while(mrhythm[q] >= 0){
-         if(mrhythm[q] > longest_duration)
+         std::cout << q << "\n";
+         std::cout << "rhythm: " << mrhythm[q] << "\n";
+         if(mrhythm[q] > longest_duration){
             longest_duration = mrhythm[q];
+
+         }
          q++;
       }
-
+      std::cout << "longest duration: " << longest_duration << "\n";
+      
 
       // store a melody line in track 1 (track 0 left empty for conductor info)
       int i=0;
-      int actiontime = 0;      // temporary storage for MIDI event time
+      int actiontime = position;      // temporary storage for MIDI event time
+      std::cout << "actiontime: " << actiontime << "\n";
      // int actiontime = longest_duration;
       midievent[2] = velocity;       // store attack/release velocity for note command
   
@@ -238,22 +249,16 @@ int plays(struct seq_node* list)
          outputfile.addEvent(1, actiontime, midievent);
          i++;
       }
-      actiontime += tpq * longest_duration;
+      actiontime = tpq;
       midievent[0] = 0x80;
       outputfile.addEvent(1, actiontime, midievent);
 
+      position += actiontime;
+      std::cout << "position: " << position << "\n";
       stmp = stmp->next_chord;
    }
 
-   
-
-//0b1111111111111111   duration
-//0b111111110000000000000000  velocity, bitshift right 16 times
-
-
-   
-
-   //outputfile.sortTracks();         // make sure data is in correct order
+   outputfile.sortTracks();         // make sure data is in correct order
    outputfile.write("themidi3.mid"); // write Standard MIDI File 
    return 0;
 }
