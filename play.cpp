@@ -190,6 +190,7 @@ int plays(struct seq_node* list)
       
       int melody[150];
       int mrhythm[150];
+      int attack[150];
       int j = 0;
       int velocity;
       
@@ -213,7 +214,7 @@ int plays(struct seq_node* list)
           melody[j] = pitch;
           //std::cout << "duration: " << duration << "\n";
           mrhythm[j] = duration;
-          velocity = v;       
+          attack[j] = v;       
           tmp = tmp->next_note;
           j++;
       }
@@ -240,12 +241,13 @@ int plays(struct seq_node* list)
       int actiontime = position;      // temporary storage for MIDI event time
       std::cout << "actiontime: " << actiontime << "\n";
      // int actiontime = longest_duration;
-      midievent[2] = velocity;       // store attack/release velocity for note command
+      //midievent[2] = velocity;       // store attack/release velocity for note command
   
 
       while (melody[i] >= 0){
          midievent[0] = 0x90;
          midievent[1] = melody[i];
+         midievent[2] = attack[i];
          std::cout << "turning note " << i << " on\n";
          outputfile.addEvent(1, actiontime, midievent);
          
