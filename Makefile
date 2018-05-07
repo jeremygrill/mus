@@ -64,7 +64,7 @@ clean :
 OBJS = ast.cmx sast.cmx codegen.cmx parser.cmx scanner.cmx semant.cmx toplevel.cmx
 
 toplevel : $(OBJS)
-	cc -o -DBUILD_TEST printc.c
+	g++ -o -DBUILD_TEST printc.cpp
 	ocamlfind ocamlopt -linkpkg -package llvm -package llvm.analysis $(OBJS) -o toplevel
 
 scanner.ml : scanner.mll

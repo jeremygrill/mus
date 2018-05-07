@@ -155,7 +155,7 @@ let translate (globals, functions) =
        L.build_or n3' n12' "tmp" builder 
        | SChordLit (e) -> 
     
-    let helper ptr elem = 
+    let helper elem ptr = 
 
       let obj = L.build_alloca chordp_node "c1" builder in 
 
@@ -176,11 +176,11 @@ let translate (globals, functions) =
       let i7 = L.build_load obj "a7" builder in 
       i7 in (*end "helper"*)
 
-    let i8 = List.fold_left helper (L.const_null chordp_node) e in
+    let i8 = List.fold_right helper e (L.const_null chordp_node) in
     i8
       | SSeqLit (e) -> 
     
-    let helper ptr elem = 
+    let helper elem ptr = 
 
       let obj = L.build_alloca seqp_node "c1" builder in 
 
@@ -201,7 +201,7 @@ let translate (globals, functions) =
       let i7 = L.build_load obj "a7" builder in 
       i7 in (*end "helper"*)
 
-    let i8 = List.fold_left helper (L.const_null seqp_node) e in
+    let i8 = List.fold_right helper e (L.const_null seqp_node) in
     i8
 
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stack>
 
 
 struct chord_node{
@@ -24,14 +24,24 @@ int printnote(int note){
 	return 0;
 }
 
+extern "C" {
+   int printc(struct chord_node* list);
+}
+
 int printc(struct chord_node* list){
 	printf("[");
 
+	std::stack <int> thestack;
 
 	struct chord_node * tmp = list;
 	while(tmp != NULL) {
-		printnote(tmp->note);
+		thestack.push(tmp->note);
 		tmp = tmp -> next_note;
+	}
+
+	while(!thestack.empty()){
+		printnote(thestack.top());
+		thestack.pop();
 	}
 
 	printf("]\n");
@@ -51,13 +61,24 @@ int printchord(struct chord_node* list){
 	return 0;
 }
 
+extern "C" {
+   int prints(struct seq_node* list);
+}
+
 int prints(struct seq_node* list){
 	printf("$(");
 
+	std::stack <chord_node*> thestack;
+
 	struct seq_node * tmp = list;
 	while(tmp != NULL) {
-		printchord(tmp->chord);
+		thestack.push(tmp->chord);
 		tmp = tmp -> next_chord;
+	}
+
+	while(!thestack.empty()){
+		printchord(thestack.top());
+		thestack.pop();
 	}
 
 	printf(")\n");
