@@ -183,9 +183,9 @@ int plays(struct seq_node* list)
 //0b1111111111111111   duration
 //0b111111110000000000000000  velocity, bitshift right 16 times
    
-
+   int counter = 1;
    while(stmp){
-
+      std::cout << "starting chord " << counter << " \n \n";
       tmp = stmp->chord;
       
       int melody[150];
@@ -248,16 +248,37 @@ int plays(struct seq_node* list)
          midievent[1] = melody[i];
          std::cout << "turning note " << i << " on\n";
          outputfile.addEvent(1, actiontime, midievent);
+         
+         
+
+         //actiontime = position;
+         //std::cout << "actiontime3: " << actiontime << "\n";
+
          i++;
       }
-      actiontime += tpq * longest_duration;
-      midievent[0] = 0x80;
-      std::cout << "turning notes off\n";
-      outputfile.addEvent(1, actiontime, midievent);
 
+      actiontime += tpq * longest_duration;
+
+      i=0;
+      while (melody[i] >= 0){
+         midievent[0] = 0x80;
+         midievent[1] = melody[i];
+         std::cout << "turning note " << i << " off\n";
+         outputfile.addEvent(1, actiontime, midievent);
+         i++;
+
+      }
+      
+      
+      //midievent[0] = 0x80;
+      //std::cout << "turning notes off\n";
+      //std::cout << "actiontime2: " << actiontime << "\n";
+      //outputfile.addEvent(1, actiontime, midievent);
+      
       position += actiontime;
       std::cout << "position: " << position << "\n";
       stmp = stmp->next_chord;
+      counter ++;
    }
 
    outputfile.sortTracks();         // make sure data is in correct order
