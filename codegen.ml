@@ -342,11 +342,12 @@ let translate (globals, functions) =
     | A.Comma   -> raise (Failure ("bad Comma"))
     ) e1' e2' "tmp" builder
       | SUnop(op, e) ->
-    let (t, _) = e and e' = expr builder e in
+    let e' = expr builder e in
     (match op with
     | A.Neg                  -> L.build_not e' "tmp" builder 
     | A.Incr                 -> L.build_add e' (expr builder (A.Int, SIntLit 1)) "tmp" builder 
     | A.Dec                  -> L.build_sub e' (expr builder (A.Int, SIntLit 1)) "tmp" builder 
+    | A.Not                  -> raise(Failure ("NOT not supported"))
     )
 
       | SAsn (s, e) -> let e' = expr builder e in
