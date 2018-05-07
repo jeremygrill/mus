@@ -1,6 +1,7 @@
 #include "MidiFile.h"
 #include <iostream>
 #include <cmath>
+#include <stack>
 
 using namespace std;
 using namespace smf;
@@ -47,7 +48,7 @@ int playn(int musSeq)
       -midievent[0] holds commands that tell the MIDI file to "do" something -- turn a note on/off, bend the pitch, etc.
       -midievent[1] holds the value that determines the pitch of a note
       -midievent[2] holds the value that determines the velocity of a note
-
+   
    actiontime specifies the position where something happens, 0 is the start of the file
    *****/
    
@@ -175,7 +176,25 @@ int plays(struct seq_node* list)
    int tpq = 120;              // default value in MIDI file is 48
    outputfile.setTicksPerQuarterNote(tpq);
 
-   seq_node * stmp = list;
+   seq_node * atmp = list;
+   seq_node * stmp;
+
+   std::stack <chord_node*> thestack;
+
+   //struct seq_node * tmp = list;
+   while(atmp != NULL) {
+      thestack.push(atmp);
+      atmp = atmp -> next_chord;
+   }
+
+   stmp= thestack.top();
+   thestack.pop();
+
+   while(!thestack.empty()){
+      stmp->next_chord = thestack.top();
+      thestack.pop();
+      stmp = stmp ->next_chord;
+   }
 
    chord_node * tmp;
    //chord_node * tmp2 = tmp;
