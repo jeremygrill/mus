@@ -198,7 +198,7 @@ int plays(struct seq_node* list)
           pitch = pitch & 0b11111111000000000000000000000000;    
           double exponent = pow(2.0, 24);  
           pitch = pitch / exponent;
-          //std::cout << "pitch: " << pitch << "\n";
+          std::cout << "pitch: " << pitch << "\n";
 
           int duration = tmp->note;
           //std::cout << "init_duration: " << duration << "\n";
@@ -218,8 +218,8 @@ int plays(struct seq_node* list)
           j++;
       }
 
-      melody[j+1] = -1;
-      mrhythm[j+1] = -1;
+      melody[j] = -1;
+      mrhythm[j] = -1;
       
       int q = 0;
       int longest_duration = 0;
@@ -246,11 +246,13 @@ int plays(struct seq_node* list)
       while (melody[i] >= 0){
          midievent[0] = 0x90;
          midievent[1] = melody[i];
+         std::cout << "turning note " << i << " on\n";
          outputfile.addEvent(1, actiontime, midievent);
          i++;
       }
-      actiontime = tpq;
+      actiontime += tpq * longest_duration;
       midievent[0] = 0x80;
+      std::cout << "turning notes off\n";
       outputfile.addEvent(1, actiontime, midievent);
 
       position += actiontime;
