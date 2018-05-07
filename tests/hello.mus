@@ -3,7 +3,12 @@ Int main()
 	Int i;
 	Int j;
 	//Bool b;
-	Note a;
+	Note a;	
+	Note ab;
+	Note ac;
+	Note ad;
+	Note ae;
+
 	Note n;
 	Note suh;
 	Note suuuh;
@@ -18,6 +23,11 @@ Int main()
 	j = --j;
 	//b = !true;
 	a = (60,64|2);
+	ab = (62,64|2);
+	ac = (64,64|2);
+	ad = (65,64|2);
+	ae = (67,64|2);
+
 	suh = (64,64|2);
 	n = (67,64|2);
 	suuuh = (62,64|2);
@@ -25,8 +35,12 @@ Int main()
 	d = suuuh * c;
 	xx = a * n;
 	s = c + d;
+	s = s + [a];
 	nextseq = $(c, d);
-	nextseq = [a] + nextseq;
+	nextseq = [a] + [ab];
+	nextseq = nextseq + [ac];
+	nextseq = nextseq + [ad];
+	nextseq = nextseq + [ae];
 	//c = [a n];
 	print(j);
 	//printn(n);
@@ -38,7 +52,7 @@ Int main()
 	prints(nextseq);
 	//playn(a);
 	//playc(c);
-	plays(s);
+	plays(nextseq);
 	//c;
 	//d;
 	return 0;

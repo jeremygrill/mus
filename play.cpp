@@ -176,36 +176,28 @@ int plays(struct seq_node* list)
    int tpq = 120;              // default value in MIDI file is 48
    outputfile.setTicksPerQuarterNote(tpq);
 
-   seq_node * atmp = list;
-   seq_node * stmp;
+   struct seq_node * atmp = list;
+   struct seq_node * stmp = list;
 
    std::stack <chord_node*> thestack;
 
-   //struct seq_node * tmp = list;
    while(atmp != NULL) {
-      thestack.push(atmp);
+      thestack.push(atmp->chord);
       atmp = atmp -> next_chord;
    }
 
-   stmp= thestack.top();
-   thestack.pop();
-
-   while(!thestack.empty()){
-      stmp->next_chord = thestack.top();
-      thestack.pop();
-      stmp = stmp ->next_chord;
-   }
-
-   chord_node * tmp;
+   struct chord_node * tmp;
    //chord_node * tmp2 = tmp;
    int position = 0;
 //0b1111111111111111   duration
 //0b111111110000000000000000  velocity, bitshift right 16 times
    
    int counter = 1;
-   while(stmp){
+   while(!thestack.empty())
+   {
       std::cout << "starting chord " << counter << " \n \n";
-      tmp = stmp->chord;
+      tmp = thestack.top();
+      thestack.pop();
       
       int melody[150];
       int mrhythm[150];
@@ -257,7 +249,7 @@ int plays(struct seq_node* list)
 
       // store a melody line in track 1 (track 0 left empty for conductor info)
       int i=0;
-      int actiontime = position;      // temporary storage for MIDI event time
+      int actiontime = position;     // temporary storage for MIDI event time
       std::cout << "actiontime: " << actiontime << "\n";
      // int actiontime = longest_duration;
       //midievent[2] = velocity;       // store attack/release velocity for note command
@@ -296,9 +288,9 @@ int plays(struct seq_node* list)
       //std::cout << "actiontime2: " << actiontime << "\n";
       //outputfile.addEvent(1, actiontime, midievent);
       
-      position += actiontime;
+      position += tpq * longest_duration; //DON'T increment by actiontime here.
       std::cout << "position: " << position << "\n";
-      stmp = stmp->next_chord;
+      //stmp = stmp->next_chord;
       counter ++;
    }
 
