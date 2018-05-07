@@ -205,7 +205,7 @@ let translate (globals, functions) =
     i8
 
        | SCall ("print", [e]) -> (* Generate a call instruction *) L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder 
-       | SCall ("printn", [e]) -> 
+       | SCall ("printn", [e]) ->
     let e' = expr builder e in 
     let n1 = L.build_and e' (expr builder (A.Int, SIntLit 4294967295)) "tmp" builder in 
     let n1' = L.build_sdiv n1 (expr builder (A.Int, SIntLit 16777216)) "tmp" builder in
@@ -234,6 +234,34 @@ let translate (globals, functions) =
     L.build_call prints_func [| e' |] "prints" builder 
 
        | SBinop (e1, op, e2) ->
+    let helper1 ptr elem = 
+      let obj = L.build_alloca chordp_node "c1" builder in 
+      let one = L.const_int i32_t 1 in 
+      let empty = L.const_int i32_t 0 in
+      let i1 = L.build_malloc chord_node "a2" builder in
+      ignore(L.build_store i1 obj builder);
+      let i3 = L.build_load obj "a3" builder in
+      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+      ignore(L.build_store (expr builder elem) i4 builder);
+      let i5 = L.build_load obj "a5" builder in
+      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+      ignore(L.build_store ptr i6 builder);
+      let i7 = L.build_load obj "a7" builder in 
+      i7 in (*end "helper1"*)
+    let helper2 ptr elem = 
+      let obj = L.build_alloca seqp_node "c1" builder in 
+      let one = L.const_int i32_t 1 in 
+      let empty = L.const_int i32_t 0 in
+      let i1 = L.build_malloc seq_node "a2" builder in
+      ignore(L.build_store i1 obj builder);
+      let i3 = L.build_load obj "a3" builder in
+      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
+      ignore(L.build_store (expr builder elem) i4 builder);
+      let i5 = L.build_load obj "a5" builder in
+      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
+      ignore(L.build_store ptr i6 builder);
+      let i7 = L.build_load obj "a7" builder in 
+      i7 in (*end "helper2"*)
     let (t, _) = e1
     and (t2, _) = e2
     and e1' = expr builder e1
@@ -255,110 +283,40 @@ let translate (globals, functions) =
     ) e1' e2' "tmp" builder 
     else if t = A.Note && t2 = A.Note then (match op with 
     | A.Mult     -> 
-    let helper ptr elem = 
-      let obj = L.build_alloca chordp_node "c1" builder in 
-      let one = L.const_int i32_t 1 in 
-      let empty = L.const_int i32_t 0 in
-      let i1 = L.build_malloc chord_node "a2" builder in
-      ignore(L.build_store i1 obj builder);
-      let i3 = L.build_load obj "a3" builder in
-      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-      ignore(L.build_store (expr builder elem) i4 builder);
-      let i5 = L.build_load obj "a5" builder in
-      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-      ignore(L.build_store ptr i6 builder);
-      let i7 = L.build_load obj "a7" builder in 
-      i7 in (*end "helper"*)
-    let i8 = List.fold_left helper (L.const_null chordp_node) [e2 ; e1] in i8
+    let i8 = List.fold_left helper1 (L.const_null chordp_node) [e2 ; e1] in i8
     | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
     | _         -> raise (Failure("bad"))
     )
 
     else if t = A.Note && t2 = A.Chord then (match op with 
     | A.Mult     -> 
-    let helper ptr elem = 
-      let obj = L.build_alloca chordp_node "c1" builder in 
-      let one = L.const_int i32_t 1 in 
-      let empty = L.const_int i32_t 0 in
-      let i1 = L.build_malloc chord_node "a2" builder in
-      ignore(L.build_store i1 obj builder);
-      let i3 = L.build_load obj "a3" builder in
-      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-      ignore(L.build_store (expr builder elem) i4 builder);
-      let i5 = L.build_load obj "a5" builder in
-      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-      ignore(L.build_store ptr i6 builder);
-      let i7 = L.build_load obj "a7" builder in 
-      i7 in (*end "helper"*)
     let e2' = expr builder e2 in
-    let i8 = helper e2' e1 in 
+    let i8 = helper1 e2' e1 in 
     i8
-    
     | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
     | _         -> raise (Failure("bad"))
     )
 
     else if t = A.Chord && t2 = A.Note then (match op with 
     | A.Mult     -> 
-    let helper ptr elem = 
-      let obj = L.build_alloca chordp_node "c1" builder in 
-      let one = L.const_int i32_t 1 in 
-      let empty = L.const_int i32_t 0 in
-      let i1 = L.build_malloc chord_node "a2" builder in
-      ignore(L.build_store i1 obj builder);
-      let i3 = L.build_load obj "a3" builder in
-      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-      ignore(L.build_store (expr builder elem) i4 builder);
-      let i5 = L.build_load obj "a5" builder in
-      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-      ignore(L.build_store ptr i6 builder);
-      let i7 = L.build_load obj "a7" builder in 
-      i7 in (*end "helper"*)
     let e1' = expr builder e1 in
-    let i8 = helper e1' e2 in 
+    let i8 = helper1 e1' e2 in 
     i8
     
-    | A.Add     -> raise (Failure ("IMPLEMENT SEQ BUILDER HERE"))
+    | A.Add     -> raise (Failure("not yet implemented"))  
     | _         -> raise (Failure("bad"))
     )
 
     else if t = A.Chord && t2 = A.Chord then (match op with 
     | A.Mult     -> 
-    let helper ptr elem = 
-      let obj = L.build_alloca chordp_node "c1" builder in 
-      let one = L.const_int i32_t 1 in 
-      let empty = L.const_int i32_t 0 in
-      let i1 = L.build_malloc chord_node "a2" builder in
-      ignore(L.build_store i1 obj builder);
-      let i3 = L.build_load obj "a3" builder in
-      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-      ignore(L.build_store (expr builder elem) i4 builder);
-      let i5 = L.build_load obj "a5" builder in
-      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-      ignore(L.build_store ptr i6 builder);
-      let i7 = L.build_load obj "a7" builder in 
-      i7 in (*end "helper"*)
     let e1' = expr builder e1 in
-    let i8 = helper e1' e2 in 
+    let i8 = helper1 e1' e2 in 
     i8
     
     | A.Add     -> 
-    let helper ptr elem = 
-      let obj = L.build_alloca seqp_node "c1" builder in 
-      let one = L.const_int i32_t 1 in 
-      let empty = L.const_int i32_t 0 in
-      let i1 = L.build_malloc seq_node "a2" builder in
-      ignore(L.build_store i1 obj builder);
-      let i3 = L.build_load obj "a3" builder in
-      let i4 = L.build_in_bounds_gep i3 [|empty; empty|] "a4"  builder in
-      ignore(L.build_store (expr builder elem) i4 builder);
-      let i5 = L.build_load obj "a5" builder in
-      let i6 = L.build_in_bounds_gep i5 [|empty; one|] "a6" builder in 
-      ignore(L.build_store ptr i6 builder);
-      let i7 = L.build_load obj "a7" builder in 
-      i7 in (*end "helper"*)
-    let i8 = List.fold_left helper (L.const_null seqp_node) [e1 ; e2] in
-    i8    | _         -> raise (Failure("bad"))
+    let i8 = List.fold_left helper2 (L.const_null seqp_node) [e2 ; e1] in
+    i8    
+    | _         -> raise (Failure("bad"))
     )
     else (match op with
     | A.Add     -> L.build_add

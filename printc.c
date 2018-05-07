@@ -3,6 +3,7 @@
 #include <string.h>
 
 
+
 struct chord_node{
 	int note;
 	struct chord_node* next_note;
@@ -25,6 +26,7 @@ int printnote(int note){
 
 int printc(struct chord_node* list){
 	printf("[");
+
 
 	struct chord_node * tmp = list;
 	while(tmp != NULL) {
