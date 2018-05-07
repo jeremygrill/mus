@@ -72,14 +72,15 @@ int prints(struct seq_node* list){
 
 	struct seq_node * tmp = list;
 	while(tmp != NULL) {
-		thestack.push(tmp->chord);
+		printchord(tmp->chord);
+		//thestack.push(tmp->chord);
 		tmp = tmp -> next_chord;
 	}
 
-	while(!thestack.empty()){
+	/*while(!thestack.empty()){
 		printchord(thestack.top());
 		thestack.pop();
-	}
+	}*/
 
 	printf(")\n");
 	return 0;
