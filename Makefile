@@ -22,6 +22,16 @@ tests: all
 	cc tests/test-chord.s
 	./a.out > tests/test-chord.out
 
+.PHONY : warmup
+warmup: all
+	./toplevel.native tests/test-warmup.mus > tests/test-warmup.ll
+	llc tests/test-warmup.ll > tests/test-warmup.s
+	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMessage.cpp Binasc.cpp Options.cpp 
+	g++ -c -std=c++11 play.cpp
+	g++ -stdlib=libc++ MidiFile.o MidiEvent.o MidiEventList.o MidiMessage.o Binasc.o play.o tests/test-warmup.s printc.o
+	./a.out > tests/test-warmup.out
+	cat tests/test-warmup.out
+
 .PHONY : hello
 hello: all
 	./toplevel.native tests/hello.mus > tests/hello.ll
