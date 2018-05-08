@@ -1,0 +1,57 @@
+
+Int main(){
+	Int i;
+
+	Note bb;
+	Note d;
+	Note f;
+	Note a;
+	Note dd;
+
+	Note aa;
+	Note c;
+	Note cc;
+
+	Note cee;
+	Note g;
+	Note ff;
+
+	Note dee;
+	Note b;
+	Note gg;
+
+	Chord one;
+	Chord two;
+	Chord three;
+	Chord four;
+
+	Seq s;
+
+	gg = (79, 100|2);
+	ff = (77, 100|2);
+	dd = (74, 100|2);
+	cc = (72, 100|2);
+	b = (71, 100|2);
+	a = (69, 100|2);
+	g = (67, 100|2);
+	f = (65, 100|2);
+	d = (62, 100|2);
+	c = (60, 100|2);
+	bb = (58, 100|2);
+	aa = (57, 100|2);
+	dee = (50, 100|2);
+	cee = (48, 100|2);
+
+	one = [bb, d, f, a, dd];
+	two = [aa, c, f, a, cc];
+	three = cee * f * g * a * cc * ff;
+	four = dee * g * a * b * dd * gg;
+
+	s = $(one, two, three, four);
+
+	plays(s);
+
+	return 0;
+
+
+}
