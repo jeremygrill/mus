@@ -10,10 +10,10 @@ llvm: all
 
 .PHONY : fail
 fail: all
-	./toplevel.native tests/fail-print.mus 2>> tests/fail-print.err
-	llc tests/fail-print.ll 2>> tests/fail-print.err
-	cc tests/fail-print.s 2>> tests/fail-print.err
-	./a.out 2>> tests/fail-print.err
+	./toplevel.native tests/fail-unop.mus 2>> tests/fail-unop.err
+	llc tests/fail-unop.ll 2>> tests/fail-unop.err
+	cc tests/fail-unop.s 2>> tests/fail-unop.err
+	./a.out 2>> tests/fail-unop.err
 
 .PHONY : tests
 tests: all

@@ -14,7 +14,7 @@ LLI="lli"
 LLC="llc"
 
 # Path to the C compiler
-CC="c++"
+CC="g++"
 
 # Path to the microc compiler.  Usually "./microc.native"
 # Try "_build/microc.native" if ocamlbuild was unable to create a symbolic link.
@@ -95,7 +95,9 @@ Check() {
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.out" &&
     Run "$MUS" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "${basename}.ll" ">" "${basename}.s" &&
-    Run "$CC" "-std=c++11" "${basename}.s" &&
+    Run "$CC" "-c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMessage.cpp Binasc.cpp Options.cpp " &&
+    Run "$CC" "-c -std=c++11 play.cpp"
+    Run "$CC" "-std=c++11" "MidiFile.o MidiEvent.o MidiEventList.o MidiMessage.o Binasc.o play.o printc.o" "${basename}.s" &&
     Run "./a.out" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
