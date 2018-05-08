@@ -157,7 +157,7 @@ int playc(struct chord_node* list)
    outputfile.addEvent(1, actiontime, midievent);
 
    outputfile.sortTracks();         // make sure data is in correct order
-   outputfile.write("themidi2.mid"); // write Standard MIDI File 
+   outputfile.write("themidi.mid"); // write Standard MIDI File 
    return 0;
 }
 
@@ -295,7 +295,7 @@ int plays(struct seq_node* list)
    }
 
    outputfile.sortTracks();         // make sure data is in correct order
-   outputfile.write("themidi3.mid"); // write Standard MIDI File 
+   outputfile.write("themidi.mid"); // write Standard MIDI File 
    return 0;
 }
 
