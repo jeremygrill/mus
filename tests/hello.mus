@@ -43,7 +43,7 @@ Int main()
 	nextseq = nextseq + [ae];
 	//c = [a n];
 	print(j);
-	//printn(n);
+	printn(n);
 	//printc(hello);
 	printc(c);
 	printc(d);

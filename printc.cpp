@@ -25,6 +25,20 @@ int printnote(int note){
 }
 
 extern "C" {
+   int printn(int note);
+}
+
+int printn(int note){
+	int n1, n2, n3;
+	n1 = (note & 4294967295)/16777216;
+	n2 = (note & 16777215)/65536;
+	n3 = (note & 65535);
+	printf("(%d,%d|%d)\n", n1, n2, n3);
+
+	return 0;
+}
+
+extern "C" {
    int printc(struct chord_node* list);
 }
 

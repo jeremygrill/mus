@@ -32,6 +32,16 @@ warmup: all
 	./a.out > tests/test-warmup.out
 	cat tests/test-warmup.out
 
+.PHONY : behind
+behind: all
+	./toplevel.native tests/test-behind.mus > tests/test-behind.ll
+	llc tests/test-behind.ll > tests/test-behind.s
+	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMessage.cpp Binasc.cpp Options.cpp 
+	g++ -c -std=c++11 play.cpp
+	g++ -stdlib=libc++ MidiFile.o MidiEvent.o MidiEventList.o MidiMessage.o Binasc.o play.o tests/test-behind.s printc.o
+	./a.out > tests/test-behind.out
+	cat tests/test-behind.out
+
 .PHONY : hello
 hello: all
 	./toplevel.native tests/hello.mus > tests/hello.ll
