@@ -75,7 +75,8 @@ clean :
 	ocamlbuild -clean
 	rm -rf testall.log *.diff toplevel scanner.ml parser.ml parser.mli
 	rm -rf hello
-	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll *.out *.exe *.mid
+	rm -rf a.out.DSYM
+	rm -rf *.cmx *.cmi *.cmo *.cmx *.o *.s *.ll *.out *.exe *.mid *.gch
 	rm -rf tests/*.ll tests/*.s
 
 # More detailed: build using ocamlc/ocamlopt + ocamlfind to locate LLVM
