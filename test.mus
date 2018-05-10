@@ -1,0 +1,13 @@
+Int main(){
+	
+	Note x;
+	Chord c;
+	Seq s;
+
+	x = (1,2|3);
+	c = [x];
+	s = $(c,[x]);
+	prints(s);
+
+	return 0;
+}

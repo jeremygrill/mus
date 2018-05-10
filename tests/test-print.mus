@@ -1,10 +1,24 @@
 Int main()
 {
 	Int i;
-	i = 44;
+	Note n;
+	Chord c;
+	Seq s;
 
-	print(33);
+	n = (33,33|33);
+	c = [(55,55|55),(66,66|66)];
+	s = $([(88,88|88),(99,99|99)]);
+
+	i = 0;
+
+
 	print(i);
-	
+	print(2);
+	printn(n);
+	printn((44,44|44));
+	printc(c);
+	printc([(77,77|77)]);
+	prints(s);
+
 	return 0;
 }

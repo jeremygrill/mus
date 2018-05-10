@@ -1,0 +1,22 @@
+Int main(){
+	
+	Chord c;
+	Note x;
+	Note y;
+	Int i;
+	Int r;
+
+	x = (11,11|11);
+	y = (22,22|22);
+
+	i = 0;
+	while(i < 10){
+		c = c * (10+i,10|10) * x;	
+		i = i + 1;
+	}
+
+	c = x * c;
+
+	printc(c);
+	return 0;
+}

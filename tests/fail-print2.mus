@@ -1,0 +1,11 @@
+Int main()
+{
+	
+	Seq s;
+
+	s = $([(101,20|10)]);
+	
+	printc(s); //need to print notes with prints
+	
+	return 0;
+}

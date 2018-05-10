@@ -1,0 +1,15 @@
+Note hey(Note a){	//cannot define a function that returns a Note
+	return a;
+}
+
+Int main()
+{
+	Note a;
+	Note b;
+
+	a = (1,1|1);
+	b = hey(a);
+	printn(b); 
+	
+	return 0;
+}

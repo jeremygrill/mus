@@ -1,6 +1,6 @@
-
 Int main(){
 	Int i;
+	Int k;
 
 	Note bb;
 	Note d;
@@ -26,6 +26,7 @@ Int main(){
 	Chord four;
 
 	Seq s;
+
 
 	gg = (79, 100|2);
 	ff = (77, 100|2);

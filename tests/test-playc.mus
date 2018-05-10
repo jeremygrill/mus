@@ -1,0 +1,14 @@
+Int main(){
+	Note a;
+	Chord c;
+	Int i;
+
+	a = (60,10|10);
+	c = [a];
+
+	playc(c);
+	printc(c);
+
+	return 0;
+
+}

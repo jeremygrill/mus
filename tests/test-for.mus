@@ -1,0 +1,15 @@
+Int main()
+{
+	Note a;
+	Chord c;
+	Int i;
+
+	for(i = 0; i < 10; i = i +1){
+		a = (10*i,10|10);
+		c = c * a;
+	}
+
+	printc(c);
+
+	return 0;
+}

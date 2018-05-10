@@ -1,0 +1,21 @@
+Int main(){
+	
+	Chord c;
+	Note x;
+	Note y;
+	Int i;
+	Int r;
+
+	x = (11,11|11);
+	y = (22,22|22);
+	i = 0;
+
+	while(i < 10){
+		c = c * (10+i,10|10);
+		c = (100-i,10|10) * c;
+		i = i + 1;
+	}
+
+	playn(c);		//cannot use playn to play Chord
+	return 0;
+}

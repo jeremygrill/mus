@@ -10,17 +10,16 @@ llvm: all
 
 .PHONY : fail
 fail: all
-	./toplevel.native tests/fail-unop.mus 2>> tests/fail-unop.err
-	llc tests/fail-unop.ll 2>> tests/fail-unop.err
-	cc tests/fail-unop.s 2>> tests/fail-unop.err
-	./a.out 2>> tests/fail-unop.err
-
+	./toplevel.native tests/fail-play.mus 2>> tests/fail-play.err
+	
 .PHONY : tests
 tests: all
-	./toplevel.native tests/test-chord.mus > tests/test-chord.ll
-	llc tests/test-chord.ll
-	cc tests/test-chord.s
-	./a.out > tests/test-chord.out
+	./toplevel.native tests/test-song.mus > tests/test-song.ll
+	llc tests/test-song.ll > tests/test-song.s
+	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiMessage.cpp MidiEventList.cpp Binasc.cpp Options.cpp 
+	g++ -c -std=c++11 play.cpp
+	g++ -stdlib=libc++ MidiFile.o MidiEvent.o MidiMessage.o MidiEventList.o Binasc.o play.o tests/test-song.s printc.o
+	./a.out > tests/test-song.out
 
 .PHONY : warmup
 warmup: all
@@ -35,8 +34,8 @@ warmup: all
 .PHONY : behind
 behind: all
 	./toplevel.native tests/test-behind.mus > tests/test-behind.ll
-	llc tests/test-behind.ll > tests/test-behind.s
-	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMessage.cpp Binasc.cpp Options.cpp 
+	llc tests/test-behind.ll > tests/test-behind.
+	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiEventList.cpp MidiMesssage.cpp Binasc.cpp Options.cpp 
 	g++ -c -std=c++11 play.cpp
 	g++ -stdlib=libc++ MidiFile.o MidiEvent.o MidiEventList.o MidiMessage.o Binasc.o play.o tests/test-behind.s printc.o
 	./a.out > tests/test-behind.out

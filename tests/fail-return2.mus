@@ -1,0 +1,4 @@
+Int main(){
+
+	return (50,10|30); //cannot return Note;
+}

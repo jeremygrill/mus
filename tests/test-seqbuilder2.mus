@@ -1,0 +1,18 @@
+Int main(){
+	
+	Int i;
+	Note n;
+	Chord c;
+	Seq s;
+
+	for(i = 0; i < 20; i = i + 1){
+		n = (5 * i, 10|10);
+		c =  [n];
+		s = s + c;
+	}
+	
+
+	prints(s);
+
+	return 0;
+}

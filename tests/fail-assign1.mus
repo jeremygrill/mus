@@ -1,0 +1,8 @@
+Int main(){
+	Chord a;
+
+	a = (60,10|10); //mismatched types
+
+	return 0;
+
+}

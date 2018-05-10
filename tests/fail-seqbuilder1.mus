@@ -1,0 +1,11 @@
+Int main(){
+	
+	Seq sa;
+	Seq sb;
+
+	sa = $([(11,11|11)]);
+	sb = $([(22,22|22)]);
+	sa = sa + sb;			//cannot add two Seqs together
+
+	return 0;
+}

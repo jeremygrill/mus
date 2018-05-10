@@ -1,0 +1,19 @@
+Int main(){
+	
+	Int i;
+	Chord c;
+	Seq s;
+
+
+	i = 0;
+
+	while(i < 10){
+		c = [(60+i,10|10)];
+		s = s + c;
+		i = i + 1;
+	}
+
+	prints(s);
+
+	return 0;
+}

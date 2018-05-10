@@ -1,0 +1,13 @@
+Int main(){
+	
+	Note a;
+	Note b;
+	Chord c;
+
+	for(i = 0; i < 24; i = i + 1){ //i is undeclared
+		a = (60 + i, 10|10);
+		b = (30 + i, 10|10);
+		c = a * b;
+	}
+	return 0;
+}

@@ -1,0 +1,21 @@
+//developed from gcd algorithm for Microc
+Int main(){
+	Int a;
+	Int b;
+
+	a = 24;
+	b = 14;
+
+	while (a != b) { 
+    if (a > b){
+   		 a = a - b;
+    }else{
+    	b = b - a;
+    } 
+    }
+
+    print(a);
+	
+	return 0;
+}
+
