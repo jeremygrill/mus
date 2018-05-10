@@ -1,3 +1,4 @@
+//Ethan O'Neal
 #include "MidiFile.h"
 #include <iostream>
 #include <cmath>

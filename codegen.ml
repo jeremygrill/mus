@@ -1,4 +1,7 @@
-(* Code generation: translate takes a semantically checked AST and
+(* Megan Massey
+  Jeremy Grill
+
+Code generation: translate takes a semantically checked AST and
 produces LLVM IR
 
 LLVM tutorial: Make sure to read the OCaml version of the tutorial

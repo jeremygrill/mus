@@ -1,4 +1,6 @@
-#megan
+# Megan Massey
+# Jeremy Grill
+
 #!/bin/bash
 
 # Regression testing script for MicroC

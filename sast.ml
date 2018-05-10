@@ -1,6 +1,6 @@
 (* Semantically-checked Abstract Syntax Tree and functions for printing it *)
-(* mem2318 *)
-(*mostly done*)
+(* Megan Massey *)
+
 open Ast
 
 type sexpr = typ * sx

@@ -1,3 +1,7 @@
+# Jeremy Grill
+# Megan Massey
+# Ethan O'Neal
+
 # Make sure ocamlbuild can find opam-managed packages: first run
 #
 # eval `opam config env`
@@ -14,12 +18,12 @@ fail: all
 	
 .PHONY : tests
 tests: all
-	./toplevel.native tests/test-song.mus > tests/test-song.ll
-	llc tests/test-song.ll > tests/test-song.s
+	./toplevel.native tests/test-hello2.mus > tests/test-hello2.ll
+	llc tests/test-hello2.ll > tests/test-hello2.s
 	g++ -c  -std=c++11 MidiFile.cpp MidiEvent.cpp MidiMessage.cpp MidiEventList.cpp Binasc.cpp Options.cpp 
 	g++ -c -std=c++11 play.cpp
-	g++ -stdlib=libc++ MidiFile.o MidiEvent.o MidiMessage.o MidiEventList.o Binasc.o play.o tests/test-song.s printc.o
-	./a.out > tests/test-song.out
+	g++ -stdlib=libc++ MidiFile.o MidiEvent.o MidiMessage.o MidiEventList.o Binasc.o play.o tests/test-hello2.s printc.o
+	./a.out > tests/test-hello2.out
 
 .PHONY : warmup
 warmup: all

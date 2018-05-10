@@ -1,7 +1,7 @@
-
-
+(* Jeremy Grill
+  Megan Massey *)
+  
 (* Semantic checking for the mus compiler *)
-(*mem2318*)
 open Ast
 open Sast
 

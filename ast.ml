@@ -1,4 +1,5 @@
-(* ejo2117 *)
+(* Megan Massey
+  Ethan O'Neal *)
 
 type op = Add | Sub | Mult | Div | Greater | Geq | Less | Leq | Eq | Neq | Comma | Land | Lor
 

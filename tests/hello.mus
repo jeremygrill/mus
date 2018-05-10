@@ -1,0 +1,17 @@
+Int main()
+{
+	Note x;
+	Note y;
+	Note z;
+	Chord c;
+
+	x = (50, 12|22);
+	y = (53, 22|33);
+	z = (60, 43|23);
+	c = [x,y,z];
+	
+	printc(c);
+	playc(c);
+	return 0;
+}
+

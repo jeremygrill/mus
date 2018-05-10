@@ -1,0 +1,9 @@
+Int main(){
+	
+	Note n;
+	n = (60,10|10);
+	Chord c;
+
+	return 0;
+
+}

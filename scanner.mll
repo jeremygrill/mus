@@ -1,4 +1,5 @@
-(* scanner file *)
+(* Megan Massey
+  Jeremy Grill *)
 
 { open Parser }
 
