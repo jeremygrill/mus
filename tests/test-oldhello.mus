@@ -1,0 +1,59 @@
+Int main()
+{
+	Int i;
+	Int j;
+	//Bool b;
+	Note a;	
+	Note ab;
+	Note ac;
+	Note ad;
+	Note ae;
+
+	Note n;
+	Note suh;
+	Note suuuh;
+	Chord c;
+	Chord d;
+	Chord ca;
+	Chord xx;
+	Seq s;
+	Seq nextseq;
+	//4 + 2;
+	j = 77;
+	j = --j;
+	//b = !true;
+	a = (60,64|2);
+	ab = (62,64|2);
+	ac = (64,64|2);
+	ad = (65,64|2);
+	ae = (67,64|4);
+
+	suh = (64,64|2);
+	n = (67,64|2);
+	suuuh = (62,64|2);
+	c = [a, n, suh];
+	d = suuuh * c;
+	xx = a * n;
+	s = c + d;
+	s = s + [a];
+	nextseq = $(c, d);
+	nextseq = [a] + [ab];
+	nextseq = nextseq + [ac];
+	nextseq = nextseq + [ad];
+	nextseq = nextseq + [ae];
+	//c = [a n];
+	print(j);
+	printn(n);
+	//printc(hello);
+	printc(c);
+	printc(d);
+	printc(xx);
+	prints(s);
+	prints(nextseq);
+	//playn(a);
+	//playc(c);
+	plays(nextseq);
+	//c;
+	//d;
+	return 0;
+}
